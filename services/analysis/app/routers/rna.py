@@ -4,8 +4,9 @@ from typing import List, Optional
 import sys
 from pathlib import Path
 import re
+import json
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, UploadFile, File
 
 from app.schemas.rna import (
     RNAAnalysisRequest,
@@ -19,6 +20,8 @@ from app.schemas.rna import (
     SequenceAnalysis,
     DiseasePrediction,
     RNARiskAssessment,
+    RNAFileUploadResponse,
+    RNASampleDataResponse,
 )
 
 router = APIRouter(prefix="/api/v1/rna", tags=["RNA Analysis"])
@@ -407,3 +410,239 @@ async def list_rna_types():
     Returns information about all supported RNA types for classification.
     """
     return RNA_TYPES
+
+
+def parse_fasta(content: str) -> List[dict]:
+    """Parse FASTA format content."""
+    sequences = []
+    current_id = None
+    current_seq = []
+
+    for line in content.strip().split("\n"):
+        line = line.strip()
+        if line.startswith(">"):
+            if current_id is not None:
+                sequences.append({
+                    "id": current_id,
+                    "sequence": "".join(current_seq),
+                    "rna_type": "auto"
+                })
+            current_id = line[1:].split()[0]  # Get ID before first space
+            current_seq = []
+        elif line and current_id is not None:
+            current_seq.append(line)
+
+    # Don't forget the last sequence
+    if current_id is not None:
+        sequences.append({
+            "id": current_id,
+            "sequence": "".join(current_seq),
+            "rna_type": "auto"
+        })
+
+    return sequences
+
+
+@router.post("/upload/json", response_model=RNAFileUploadResponse)
+async def upload_json_file(file: UploadFile = File(...)):
+    """
+    Upload JSON file containing RNA sequences for batch analysis.
+
+    Expected JSON format:
+    ```json
+    {
+        "sequences": [
+            {
+                "id": "seq1",
+                "sequence": "AUGGCCAUGG...",
+                "rna_type": "mRNA",
+                "name": "Sample 1"
+            }
+        ]
+    }
+    ```
+    """
+    if not file.filename.endswith(".json"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be a JSON file (.json)"
+        )
+
+    try:
+        content = await file.read()
+        data = json.loads(content.decode("utf-8"))
+    except json.JSONDecodeError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid JSON format: {str(e)}"
+        )
+
+    sequences = data.get("sequences", [])
+    if not sequences:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No sequences found in JSON file"
+        )
+
+    # Analyze sequences
+    results = []
+    for seq in sequences[:100]:  # Limit to 100 sequences
+        try:
+            request = RNAAnalysisRequest(
+                sequence=seq.get("sequence", ""),
+                rna_type=seq.get("rna_type", "auto"),
+            )
+            result = await analyze_rna(request)
+            results.append(result)
+        except HTTPException:
+            continue
+
+    # Calculate summary
+    total = len(results)
+    high_risk = sum(1 for r in results if r.risk_assessment.risk_level in ["high", "critical"])
+
+    summary = {
+        "total_sequences": total,
+        "high_risk_count": high_risk,
+        "avg_gc_content": sum(r.sequence_analysis.gc_content for r in results) / total if total > 0 else 0,
+        "rna_type_distribution": {},
+    }
+
+    for r in results:
+        rna_type = r.sequence_analysis.detected_rna_type
+        summary["rna_type_distribution"][rna_type] = summary["rna_type_distribution"].get(rna_type, 0) + 1
+
+    return RNAFileUploadResponse(
+        filename=file.filename,
+        format="json",
+        sequences_found=len(sequences),
+        sequences_analyzed=len(results),
+        results=results,
+        summary=summary,
+    )
+
+
+@router.post("/upload/fasta", response_model=RNAFileUploadResponse)
+async def upload_fasta_file(file: UploadFile = File(...)):
+    """
+    Upload FASTA file containing RNA sequences for batch analysis.
+
+    Expected FASTA format:
+    ```
+    >sequence_id_1
+    AUGGCCAUGGCGCCCAGAACUGAG
+    >sequence_id_2
+    GCUGACUCCAAAGCUCUGCUU
+    ```
+    """
+    if not file.filename.endswith((".fasta", ".fa", ".fna")):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File must be a FASTA file (.fasta, .fa, .fna)"
+        )
+
+    try:
+        content = await file.read()
+        sequences = parse_fasta(content.decode("utf-8"))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to parse FASTA file: {str(e)}"
+        )
+
+    if not sequences:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No sequences found in FASTA file"
+        )
+
+    # Analyze sequences
+    results = []
+    for seq in sequences[:100]:  # Limit to 100 sequences
+        try:
+            request = RNAAnalysisRequest(
+                sequence=seq.get("sequence", ""),
+                rna_type=seq.get("rna_type", "auto"),
+            )
+            result = await analyze_rna(request)
+            results.append(result)
+        except HTTPException:
+            continue
+
+    # Calculate summary
+    total = len(results)
+    high_risk = sum(1 for r in results if r.risk_assessment.risk_level in ["high", "critical"])
+
+    summary = {
+        "total_sequences": total,
+        "high_risk_count": high_risk,
+        "avg_gc_content": sum(r.sequence_analysis.gc_content for r in results) / total if total > 0 else 0,
+        "rna_type_distribution": {},
+    }
+
+    for r in results:
+        rna_type = r.sequence_analysis.detected_rna_type
+        summary["rna_type_distribution"][rna_type] = summary["rna_type_distribution"].get(rna_type, 0) + 1
+
+    return RNAFileUploadResponse(
+        filename=file.filename,
+        format="fasta",
+        sequences_found=len(sequences),
+        sequences_analyzed=len(results),
+        results=results,
+        summary=summary,
+    )
+
+
+@router.get("/sample-data", response_model=RNASampleDataResponse)
+async def get_sample_data():
+    """
+    Get sample RNA sequence data for testing.
+
+    Returns a collection of sample RNA sequences that can be used
+    to test the analysis endpoints.
+    """
+    # Load from sample file if exists
+    sample_file = Path(__file__).parents[4] / "test_data" / "sample_rna_sequences.json"
+
+    if sample_file.exists():
+        try:
+            with open(sample_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return RNASampleDataResponse(
+                sequences=data.get("sequences", []),
+                metadata=data.get("metadata", {}),
+            )
+        except Exception:
+            pass
+
+    # Return default sample data
+    return RNASampleDataResponse(
+        sequences=[
+            {
+                "id": "sample_mRNA_001",
+                "name": "Sample mRNA",
+                "sequence": "AUGGCCAUGGCGCCCAGAACUGAGAUCAAUAGUACCCGUAUUAACGGGUGA",
+                "rna_type": "mRNA",
+                "description": "샘플 mRNA 서열",
+            },
+            {
+                "id": "sample_siRNA_001",
+                "name": "Sample siRNA",
+                "sequence": "GCUGACUCCAAAGCUCUGCUU",
+                "rna_type": "siRNA",
+                "description": "샘플 siRNA 서열 (21nt)",
+            },
+            {
+                "id": "sample_circRNA_001",
+                "name": "Sample circRNA",
+                "sequence": "AGCUAGCUAGCUUUAAACCCGGGAUUUCCAAAGGGCCCUUUAAAGCUAGCU",
+                "rna_type": "circRNA",
+                "description": "샘플 원형 RNA 서열",
+            },
+        ],
+        metadata={
+            "version": "1.0",
+            "description": "기본 샘플 데이터",
+        },
+    )

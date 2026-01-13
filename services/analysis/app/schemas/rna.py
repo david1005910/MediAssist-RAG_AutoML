@@ -158,3 +158,22 @@ class DiseaseInfo(BaseModel):
     name_en: str = Field(..., description="Disease name (English)")
     icd_code: str = Field(..., description="ICD-10 code")
     description: Optional[str] = Field(default=None, description="Disease description")
+
+
+class RNAFileUploadResponse(BaseModel):
+    """Response from file upload analysis."""
+    filename: str = Field(..., description="Uploaded filename")
+    format: str = Field(..., description="File format (json, fasta)")
+    sequences_found: int = Field(..., description="Number of sequences found")
+    sequences_analyzed: int = Field(..., description="Number of sequences analyzed")
+    results: List[RNAAnalysisResponse]
+    summary: Dict[str, Any] = Field(default_factory=dict, description="Summary statistics")
+    disclaimer: str = Field(
+        default="이 분석 결과는 참고용이며, 정확한 진단을 위해 반드시 의료 전문가와 상담하세요.",
+    )
+
+
+class RNASampleDataResponse(BaseModel):
+    """Response with sample RNA data."""
+    sequences: List[Dict[str, Any]] = Field(..., description="List of sample sequences")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="Dataset metadata")

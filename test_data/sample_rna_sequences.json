@@ -1,0 +1,196 @@
+{
+  "sequences": [
+    {
+      "id": "mRNA_001",
+      "name": "Human Beta-Globin mRNA",
+      "sequence": "AUGGUGCACCUGACUCCUGAGGAGAAGUCUGCCGUUACUGCCCUGUGGGGCAAGGUGAACGUGGAUGAAGUUGGUGGUGAGGCCCUGGGCAGGCUGCUGGUGGUCUACCCUUGGACCCAGAGGUUCUUUGAGUCCUUUGGGGAUCUGUCCACUCCUGAUGCUGUUAUGGGCAACCCUAAGGUGAAGGCUCAUGGCAAGAAAGUGCUCGGUGCCUUUAGUGAUGGCCUGGCUCACCUGGACAACCUCAAGGGCACCUUUGCCACACUGAGUGAGCUGCACUGUGACAAGCUGCACGUGGAUCCUGAGAACUUCAGG",
+      "rna_type": "mRNA",
+      "description": "인간 베타-글로빈 유전자 mRNA - 산소 운반 단백질",
+      "source": "NCBI NM_000518",
+      "expected_diseases": ["겸상적혈구빈혈", "베타-지중해빈혈"]
+    },
+    {
+      "id": "mRNA_002",
+      "name": "BRCA1 mRNA Fragment",
+      "sequence": "AUGGAUUUAUCUGCCGUUUGCUCAGCUUGACACUCAGAGCGUGCCUGGUUUGCAGGUGCCUGAGGCUUUAGCUGCUGAGCGUUGACCUGCUGCCAGAGAGUCUUGGACAUUUUACUGACCCUGAUGUGAUUUUGACUGACAACCUAAAUUUUGAGUUGUUCUUACAGUUUGUCUUUGAACCAUGAGGUUGAUAAGUGCUGACCUGGCCAACAGCAGUCUCCUGAGAACCUAUGACUACAAAUUUGAGGACGUCAGUCCUUCUGAGUGAGGACAUAAUUCAGCAUUUCUUG",
+      "rna_type": "mRNA",
+      "description": "BRCA1 종양억제유전자 mRNA - DNA 수리 관여",
+      "source": "NCBI NM_007294",
+      "expected_diseases": ["유방암", "난소암"]
+    },
+    {
+      "id": "mRNA_003",
+      "name": "TP53 mRNA Fragment",
+      "sequence": "AUGGAGGAGCCGCAGUCAGAUCCUAGCGUCGAGCCCCCUCUGAGUCAGGAAACAUUUUCAGACCUAUGGAAACUACUUCCUGAAAACAACGUUCUGCCAUCACUUCAUGGACCUAUGGAAACUAGUUCCUGAAAACAACGUUCUAGUCACUUCAUGGACCUAUGGAAACUACUUCCUGAAAACAACGUUCUGUCACUUCAUGGACCUAUGGAAACUACUUCCUGAAAACAACGUUCUACCUCACUUCAUGGACCUAUGGAAACUAGUUCCUGAAAACAACGUUCUAGUCACUUCAUGG",
+      "rna_type": "mRNA",
+      "description": "TP53 종양억제유전자 mRNA - 세포주기 조절",
+      "source": "NCBI NM_000546",
+      "expected_diseases": ["리-프라우메니 증후군", "다양한 암"]
+    },
+    {
+      "id": "mRNA_004",
+      "name": "Insulin mRNA",
+      "sequence": "AUGGCCUUGUGGAUGCGCCUCCUGCCCUGCUGGCGCUGCUGUCCCUGCCCUGCUCGCCGGCCCUGGCCGUCCUGAGCCAGCCCCAGCCUGCCUCCUUGUUCAGGGAGCUGGAGCUCUGCUGAACCAGUGCUGGAUCCAUCUGCACUUGCAGCCGAACCCUGCUCUGCACUUGCAGCCUGAUCUGCACUUGCAGCCUGAUCUGCACUUGCAGCCUGACAGCACCUGAUGUUGAGUGUCUGUCUGAAUG",
+      "rna_type": "mRNA",
+      "description": "인슐린 호르몬 mRNA - 혈당 조절",
+      "source": "NCBI NM_000207",
+      "expected_diseases": ["제1형 당뇨병", "인슐린종"]
+    },
+    {
+      "id": "mRNA_005",
+      "name": "EGFR mRNA Fragment",
+      "sequence": "AUGCGACCUUCCGAGACCCCCGCGUGCUGCUGCUGAUAGCGCCCUCGCCCGGCGAGGCGCGGAGCGGAGCCUGCAGGAGAGGAGGCCCUGGGAGGCCCUGGGCUGCUGGCGCGCUGCUGGCCGCGGCGGUGCUGCUGAUCGCCCUCCGCACCGGCAGCUCCUGCUGAUCCAGGCCCAGUGCUGCUGCUGCUGCUGAUGCUGCUGAUGCUGCUGAUGCUGCUGCUGCUGCUGCUGCUG",
+      "rna_type": "mRNA",
+      "description": "EGFR 수용체 mRNA - 세포 성장 신호전달",
+      "source": "NCBI NM_005228",
+      "expected_diseases": ["비소세포폐암", "교모세포종"]
+    },
+    {
+      "id": "siRNA_001",
+      "name": "Anti-VEGF siRNA",
+      "sequence": "GGAGUACCCUGAUGAGAUCUU",
+      "rna_type": "siRNA",
+      "description": "VEGF 억제 siRNA - 혈관신생 억제 치료제",
+      "source": "Therapeutic Design",
+      "expected_diseases": ["황반변성", "암 혈관신생"]
+    },
+    {
+      "id": "siRNA_002",
+      "name": "Anti-TNF-alpha siRNA",
+      "sequence": "GCUGACUCCAAAGCUCUGCUU",
+      "rna_type": "siRNA",
+      "description": "TNF-alpha 억제 siRNA - 염증성 질환 치료",
+      "source": "Therapeutic Design",
+      "expected_diseases": ["류마티스 관절염", "크론병"]
+    },
+    {
+      "id": "siRNA_003",
+      "name": "Anti-BCL2 siRNA",
+      "sequence": "GUGAAGUACAUCGUGUCAGGC",
+      "rna_type": "siRNA",
+      "description": "BCL2 억제 siRNA - 세포사멸 유도",
+      "source": "Cancer Research",
+      "expected_diseases": ["백혈병", "림프종"]
+    },
+    {
+      "id": "siRNA_004",
+      "name": "Anti-KRAS siRNA",
+      "sequence": "GUUGGAGCUUGUGGCGUAGUU",
+      "rna_type": "siRNA",
+      "description": "KRAS 돌연변이 억제 siRNA - 암세포 증식 억제",
+      "source": "Oncology Research",
+      "expected_diseases": ["췌장암", "대장암"]
+    },
+    {
+      "id": "siRNA_005",
+      "name": "Anti-HIF1A siRNA",
+      "sequence": "CUGAUGACCAGCAACUUGAUU",
+      "rna_type": "siRNA",
+      "description": "HIF1A 억제 siRNA - 저산소 반응 조절",
+      "source": "Therapeutic Design",
+      "expected_diseases": ["고형암", "허혈성 질환"]
+    },
+    {
+      "id": "circRNA_001",
+      "name": "circHIPK3",
+      "sequence": "AGCUAGCUAGCUUUAAACCCGGGAUUUCCAAAGGGCCCUUUAAAGCUAGCUAGCUUUAAACCCGGGAUUUCCAAAGGGCCCUUUAAAGCUAGCUAGCUUUAAACCCGGGAUUUCCAAAGGGCCCUUUAAAGCUAGCUAGCUUUAAACCCGGGAUUUCCAAAGGGCCCUUUAAA",
+      "rna_type": "circRNA",
+      "description": "circHIPK3 - miR-124 스폰지, 세포 증식 조절",
+      "source": "CircBase hsa_circ_0000284",
+      "expected_diseases": ["당뇨병", "간암"]
+    },
+    {
+      "id": "circRNA_002",
+      "name": "circFOXO3",
+      "sequence": "AUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCCAUGGCUGAACUGAGGCC",
+      "rna_type": "circRNA",
+      "description": "circFOXO3 - 세포 노화 및 심장 기능 조절",
+      "source": "CircBase hsa_circ_0006404",
+      "expected_diseases": ["심부전", "노화 관련 질환"]
+    },
+    {
+      "id": "circRNA_003",
+      "name": "circCDR1as (ciRS-7)",
+      "sequence": "AUCUUUUGCUAUCUGGCUGGCUGACUGACUUUGGACUGAUUGACUGCUGACUGCUGAAUCUUUUGCUAUCUGGCUGGCUGACUGACUUUGGACUGAUUGACUGCUGACUGCUGAAUCUUUUGCUAUCUGGCUGGCUGACUGACUUUGGACUGAUUGACUGCUGACUGCUGA",
+      "rna_type": "circRNA",
+      "description": "ciRS-7 - miR-7 스폰지, 뇌 발달 관여",
+      "source": "CircBase hsa_circ_0001946",
+      "expected_diseases": ["알츠하이머", "파킨슨병"]
+    },
+    {
+      "id": "circRNA_004",
+      "name": "circPVT1",
+      "sequence": "GCUAGCUAGCUAGCUUUAAAGCUGACUGACUGAUGCUGACUGACUGAUGCUGACUGCUAGCUAGCUAGCUUUAAAGCUGACUGACUGAUGCUGACUGACUGAUGCUGACUGCUAGCUAGCUAGCUUUAAAGCUGACUGACUGAUGCUGACUGACUGAUGCUGACUG",
+      "rna_type": "circRNA",
+      "description": "circPVT1 - 암세포 증식 및 전이 촉진",
+      "source": "CircBase hsa_circ_0001821",
+      "expected_diseases": ["위암", "식도암"]
+    },
+    {
+      "id": "circRNA_005",
+      "name": "circITCH",
+      "sequence": "AUGCUGAUGCUGAUGCUGACUGACUGACUGACUGCUGACUGCUGACUGCUAUGCUGAUGCUGAUGCUGACUGACUGACUGACUGCUGACUGCUGACUGCUAUGCUGAUGCUGAUGCUGACUGACUGACUGACUGCUGACUGCUGACUGCU",
+      "rna_type": "circRNA",
+      "description": "circITCH - Wnt/β-catenin 경로 억제, 종양 억제",
+      "source": "CircBase hsa_circ_0001141",
+      "expected_diseases": ["폐암", "대장암"]
+    },
+    {
+      "id": "lncRNA_001",
+      "name": "HOTAIR",
+      "sequence": "GGUGCUAAUGUCCUAACCUGAGGUUUUCCCAUGAGGCUUUCAUCUGACCAGGACUGCGUGGAUGAAGUGAGGUUUCAGUACCUCUAUAUAAAGAAAGGUGUGGGCUGCUGCUUUUGCCUUUUGCCGCUUUUGAAGUGCCCAAAUGAUUAAUCCUGAGUUUUGACCUUGCUUUUGCUCUGAAAUUUGCUUUCCUUUUGAAGUUUUUGCCUAACCUUACCUUCCUUCAGCUUGCUGAAGACUCCUUGUUUUUGCUGCCGUCUUUUUGAAUUUUGCCUGAGUUUGCCCUUUUUGCUUUCCUUUUGCU",
+      "rna_type": "lncRNA",
+      "description": "HOTAIR - PRC2 복합체 유도, 암 전이 촉진",
+      "source": "NCBI NR_003716",
+      "expected_diseases": ["유방암 전이", "간암"]
+    },
+    {
+      "id": "lncRNA_002",
+      "name": "MALAT1",
+      "sequence": "AAAGGCUGGUUUUUGGUUUUAGGUGCUUUUGCUGGCCUUGAAUGUAUUUUUGCUUUUCCUUUGGUUUGAAGGGCUUUUUGCUUUGCUUUGCCUUUGAAGGCUUUUGCUGGGCUUUUGGUUUGAAUGUUUUUGCUGGCCUUUUUGCUUUGGCUUUUGAAUGUAUUUUUGCUGGGCUUUUUGGUUUGAAGGGCUUUUUGCUUUUGCUGGCCUUGAAUGUAUUUUUGCUUUUCCUUUUGGUUUGAAGGGCUUUUUGCUUUGCUUUGCUUUUGAAGGCUUUUGCUGGG",
+      "rna_type": "lncRNA",
+      "description": "MALAT1 - 스플라이싱 조절, 폐암 예후 바이오마커",
+      "source": "NCBI NR_002819",
+      "expected_diseases": ["폐암", "전립선암"]
+    },
+    {
+      "id": "lncRNA_003",
+      "name": "H19",
+      "sequence": "GCGCGCAUGCAUGCAUGCAUGCAUGUGCUGCUGCUGCUGCUACUGCUACUGCUACUGCUACUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUGCUG",
+      "rna_type": "lncRNA",
+      "description": "H19 - 각인 유전자, 태아 발달 및 종양 조절",
+      "source": "NCBI NR_002196",
+      "expected_diseases": ["베크위드-비데만 증후군", "윌름스 종양"]
+    },
+    {
+      "id": "lncRNA_004",
+      "name": "XIST",
+      "sequence": "AUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCGAUCG",
+      "rna_type": "lncRNA",
+      "description": "XIST - X 염색체 불활성화 조절",
+      "source": "NCBI NR_001564",
+      "expected_diseases": ["터너 증후군", "X-연관 질환"]
+    },
+    {
+      "id": "lncRNA_005",
+      "name": "MEG3",
+      "sequence": "UGCUGCUGCUGCUGCUGCUGCUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUGACUG",
+      "rna_type": "lncRNA",
+      "description": "MEG3 - 종양 억제 lncRNA, p53 활성화",
+      "source": "NCBI NR_002766",
+      "expected_diseases": ["뇌하수체 종양", "간암"]
+    }
+  ],
+  "metadata": {
+    "version": "2.0",
+    "created": "2026-01-14",
+    "description": "RNA 서열 분석을 위한 샘플 데이터셋 - 각 RNA 유형별 5개 샘플",
+    "total_sequences": 20,
+    "rna_types": {
+      "mRNA": 5,
+      "siRNA": 5,
+      "circRNA": 5,
+      "lncRNA": 5
+    }
+  }
+}

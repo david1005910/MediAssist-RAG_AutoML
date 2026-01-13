@@ -74,6 +74,7 @@ data/
 *.json
 !**/fixtures/*.json
 !**/training_history.json
+!test_data/*.json
 
 # ChromaDB
 chroma_db/

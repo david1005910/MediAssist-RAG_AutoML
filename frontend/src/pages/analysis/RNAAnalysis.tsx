@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { apiClient } from '../../services/api/client'
 
@@ -37,6 +37,21 @@ interface RNAAnalysisResponse {
   disclaimer: string
 }
 
+interface SampleSequence {
+  id: string
+  name: string
+  sequence: string
+  rna_type: string
+  description: string
+  source?: string
+  expected_diseases?: string[]
+}
+
+interface SampleDataResponse {
+  sequences: SampleSequence[]
+  metadata: Record<string, unknown>
+}
+
 const RNA_TYPES = [
   { value: 'auto', label: '자동 감지' },
   { value: 'mRNA', label: 'mRNA (Messenger RNA)' },
@@ -49,6 +64,17 @@ export default function RNAAnalysis() {
   const [sequence, setSequence] = useState('')
   const [rnaType, setRnaType] = useState('auto')
   const [result, setResult] = useState<RNAAnalysisResponse | null>(null)
+  const [showSampleData, setShowSampleData] = useState(false)
+
+  // Fetch sample data
+  const { data: sampleData } = useQuery<SampleDataResponse>({
+    queryKey: ['rna-sample-data'],
+    queryFn: async () => {
+      const response = await fetch('/api/v1/rna/sample-data')
+      return response.json()
+    },
+    enabled: showSampleData,
+  })
 
   const analysisMutation = useMutation({
     mutationFn: async (data: { sequence: string; rna_type?: string }) => {
@@ -57,6 +83,12 @@ export default function RNAAnalysis() {
     },
     onSuccess: (data) => setResult(data),
   })
+
+  const loadSampleSequence = (sample: SampleSequence) => {
+    setSequence(sample.sequence)
+    setRnaType(sample.rna_type || 'auto')
+    setShowSampleData(false)
+  }
 
   const handleAnalyze = () => {
     if (sequence.trim().length < 10) {
@@ -159,26 +191,103 @@ export default function RNAAnalysis() {
 
             {/* File Upload */}
             <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
-              <h2 className="text-lg font-semibold text-metal-text-light mb-4">FASTA 파일 업로드</h2>
-              <input
-                type="file"
-                accept=".fasta,.fa,.txt"
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) {
-                    const reader = new FileReader()
-                    reader.onload = (event) => {
-                      const text = event.target?.result as string
-                      // Parse FASTA - skip header lines starting with >
-                      const lines = text.split('\n')
-                      const seqLines = lines.filter((line) => !line.startsWith('>'))
-                      setSequence(seqLines.join('').toUpperCase().replace(/[^AUGC]/gi, ''))
-                    }
-                    reader.readAsText(file)
-                  }
-                }}
-                className="w-full text-metal-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-accent-cyan/20 file:text-accent-cyan hover:file:bg-accent-cyan/30 file:cursor-pointer"
-              />
+              <h2 className="text-lg font-semibold text-metal-text-light mb-4">파일 업로드</h2>
+
+              <div className="space-y-4">
+                {/* FASTA Upload */}
+                <div>
+                  <label className="block text-sm text-metal-text-mid mb-2">FASTA 파일</label>
+                  <input
+                    type="file"
+                    accept=".fasta,.fa,.txt"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = (event) => {
+                          const text = event.target?.result as string
+                          const lines = text.split('\n')
+                          const seqLines = lines.filter((line) => !line.startsWith('>'))
+                          setSequence(seqLines.join('').toUpperCase().replace(/[^AUGC]/gi, ''))
+                        }
+                        reader.readAsText(file)
+                      }
+                    }}
+                    className="w-full text-metal-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-accent-cyan/20 file:text-accent-cyan hover:file:bg-accent-cyan/30 file:cursor-pointer"
+                  />
+                </div>
+
+                {/* JSON Upload */}
+                <div>
+                  <label className="block text-sm text-metal-text-mid mb-2">JSON 파일</label>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = (event) => {
+                          try {
+                            const json = JSON.parse(event.target?.result as string)
+                            const sequences = json.sequences || []
+                            if (sequences.length > 0) {
+                              setSequence(sequences[0].sequence || '')
+                              setRnaType(sequences[0].rna_type || 'auto')
+                            }
+                          } catch {
+                            alert('JSON 파일 형식이 올바르지 않습니다.')
+                          }
+                        }
+                        reader.readAsText(file)
+                      }
+                    }}
+                    className="w-full text-metal-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-purple-500/20 file:text-purple-400 hover:file:bg-purple-500/30 file:cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Sample Data */}
+            <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-metal-text-light">샘플 데이터</h2>
+                <button
+                  onClick={() => setShowSampleData(!showSampleData)}
+                  className="text-sm text-accent-cyan hover:text-accent-cyan/80"
+                >
+                  {showSampleData ? '닫기' : '샘플 보기'}
+                </button>
+              </div>
+
+              {showSampleData && sampleData && (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {sampleData.sequences.map((sample) => (
+                    <button
+                      key={sample.id}
+                      onClick={() => loadSampleSequence(sample)}
+                      className="w-full text-left p-3 bg-[#1A1D21] hover:bg-[#252930] border border-white/10 rounded-lg transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-metal-text-light">{sample.name}</span>
+                        <span className="px-2 py-0.5 bg-accent-cyan/20 text-accent-cyan text-xs rounded">
+                          {sample.rna_type}
+                        </span>
+                      </div>
+                      <p className="text-xs text-metal-text-muted mt-1">{sample.description}</p>
+                      <p className="text-xs text-metal-text-muted mt-1 font-mono truncate">
+                        {sample.sequence.substring(0, 40)}...
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!showSampleData && (
+                <p className="text-sm text-metal-text-muted">
+                  샘플 RNA 서열을 로드하여 테스트할 수 있습니다.
+                </p>
+              )}
             </div>
 
             {/* Analyze Button */}
