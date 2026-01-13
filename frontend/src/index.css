@@ -1,0 +1,242 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Frosted Metal Aesthetic - Global Styles */
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+  background: linear-gradient(180deg, #1A1D21 0%, #15171A 100%);
+  color: #D1D5DB;
+}
+
+/* Frosted Metal Component Classes */
+@layer components {
+  /* Metal Card Surface */
+  .metal-card {
+    background: linear-gradient(180deg, #3A3F47 0%, #2F343B 50%, #252930 100%);
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    border-left: 1px solid rgba(255,255,255,0.05);
+    border-right: 1px solid rgba(0,0,0,0.2);
+    box-shadow: 0px 4px 16px rgba(0,0,0,0.25);
+    border-radius: 6px;
+  }
+
+  /* Metal Card Light */
+  .metal-card-light {
+    background: linear-gradient(180deg, #E3E6EB 0%, #C9CED6 50%, #B6BCC7 100%);
+    border-top: 1px solid rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    box-shadow: 0px 4px 16px rgba(0,0,0,0.12);
+    border-radius: 6px;
+  }
+
+  /* Metal Header */
+  .metal-header {
+    background: linear-gradient(180deg, #2C3036 0%, #23272B 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* Metal Button - Primary */
+  .metal-btn {
+    background: linear-gradient(180deg, #3C6E96 0%, #355E82 50%, #2C4F6A 100%);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+    color: #F0F0F0;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .metal-btn:hover {
+    background: linear-gradient(180deg, #4A7FA8 0%, #3D6A8E 50%, #345B78 100%);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.25);
+  }
+
+  .metal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Metal Button - Secondary */
+  .metal-btn-secondary {
+    background: linear-gradient(180deg, #4A4F59 0%, #373B44 50%, #2C3036 100%);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.15);
+    color: #D1D5DB;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .metal-btn-secondary:hover {
+    background: linear-gradient(180deg, #555A65 0%, #42474F 50%, #363B42 100%);
+  }
+
+  /* Metal Button - Danger */
+  .metal-btn-danger {
+    background: linear-gradient(180deg, #8B3A3A 0%, #6B2D2D 50%, #4D2020 100%);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.2);
+    color: #F0F0F0;
+    font-weight: 500;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  /* Metal Input */
+  .metal-input {
+    background: linear-gradient(180deg, #252930 0%, #1F2328 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top-color: rgba(0,0,0,0.3);
+    box-shadow: inset 0px 1px 3px rgba(0,0,0,0.3);
+    color: #F0F0F0;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
+
+  .metal-input:focus {
+    border-color: #4FC3F7;
+    outline: none;
+    box-shadow: inset 0px 1px 3px rgba(0,0,0,0.3), 0px 0px 0px 2px rgba(79, 195, 247, 0.2);
+  }
+
+  .metal-input::placeholder {
+    color: #6B7280;
+  }
+
+  /* Metal Select */
+  .metal-select {
+    background: linear-gradient(180deg, #252930 0%, #1F2328 100%);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #F0F0F0;
+    border-radius: 4px;
+  }
+
+  /* Metal Badge */
+  .metal-badge {
+    background: linear-gradient(180deg, #3C6E96 0%, #2C4F6A 100%);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    color: #F0F0F0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .metal-badge-green {
+    background: linear-gradient(180deg, #26C281 0%, #1E9B68 100%);
+  }
+
+  .metal-badge-yellow {
+    background: linear-gradient(180deg, #B7950B 0%, #8B7209 100%);
+  }
+
+  .metal-badge-red {
+    background: linear-gradient(180deg, #8B3A3A 0%, #6B2D2D 100%);
+  }
+
+  /* Metal Progress Bar */
+  .metal-progress {
+    background: linear-gradient(180deg, #1A1D21 0%, #15171A 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .metal-progress-bar {
+    background: linear-gradient(180deg, #4FC3F7 0%, #29B6F6 100%);
+    border-top: 1px solid rgba(255,255,255,0.3);
+  }
+
+  /* Metal Divider */
+  .metal-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  }
+
+  /* Metal Tab */
+  .metal-tab {
+    background: transparent;
+    color: #A8B0BA;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.15s ease;
+  }
+
+  .metal-tab:hover {
+    color: #D1D5DB;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .metal-tab-active {
+    background: linear-gradient(180deg, #3A3F47 0%, #2F343B 100%);
+    color: #F0F0F0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(0,0,0,0.2);
+  }
+
+  /* Metal Sidebar */
+  .metal-sidebar {
+    background: linear-gradient(180deg, #2C3036 0%, #23272B 50%, #1A1D21 100%);
+    border-right: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* JSON Viewer */
+  .metal-json-viewer {
+    background: linear-gradient(180deg, #0D0F11 0%, #0A0B0D 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #4FC3F7;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  }
+
+  /* Status indicators */
+  .metal-status-online {
+    background: radial-gradient(circle, #4FC3F7 0%, #29B6F6 100%);
+    box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
+  }
+
+  .metal-status-offline {
+    background: radial-gradient(circle, #8B3A3A 0%, #6B2D2D 100%);
+  }
+
+  /* Scrollbar styling */
+  .metal-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .metal-scrollbar::-webkit-scrollbar-track {
+    background: #1A1D21;
+  }
+
+  .metal-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #4A4F59 0%, #373B44 100%);
+    border-radius: 4px;
+  }
+
+  .metal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #555A65 0%, #42474F 100%);
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .border-metal-edge {
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+  }
+
+  .text-metal-gradient {
+    background: linear-gradient(180deg, #F0F0F0 0%, #A8B0BA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}

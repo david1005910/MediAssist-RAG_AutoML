@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mediassist-ingress
+  namespace: mediassist
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.mediassist.ai
+      secretName: mediassist-tls
+  rules:
+    - host: api.mediassist.ai
+      http:
+        paths:
+          - path: /api/v1/auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 80
+          - path: /api/v1/analysis
+            pathType: Prefix
+            backend:
+              service:
+                name: analysis-service
+                port:
+                  number: 80
