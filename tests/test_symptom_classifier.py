@@ -9,8 +9,9 @@ class TestSymptomClassifier:
 
     @pytest.fixture
     def classifier(self):
-        """Create a classifier instance."""
-        return SymptomClassifier()
+        """Create a classifier instance with trained model."""
+        model_path = "models/symptom_classifier/weights"
+        return SymptomClassifier(model_path=model_path)
 
     def test_predict_returns_list(self, classifier, sample_symptoms):
         """Test that predict returns a list."""

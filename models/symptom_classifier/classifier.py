@@ -2,10 +2,8 @@
 
 from typing import List, Dict, Optional
 import numpy as np
-import xgboost as xgb
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
-import joblib
 
 from .ner import MedicalNER
 
@@ -76,28 +74,17 @@ class SymptomClassifier:
         # Encode labels
         y_encoded = self.label_encoder.fit_transform(y)
 
-        # Build ensemble
-        xgb_clf = xgb.XGBClassifier(
-            n_estimators=100,
-            max_depth=6,
-            learning_rate=0.1,
-            objective="multi:softprob",
-            random_state=42,
-            eval_metric="mlogloss",
-        )
-
+        # Use RandomForest classifier (XGBoost has serialization issues with Python 3.13)
         rf_clf = RandomForestClassifier(
-            n_estimators=100,
-            max_depth=10,
+            n_estimators=200,
+            max_depth=12,
+            min_samples_split=2,
+            min_samples_leaf=1,
             random_state=42,
+            n_jobs=-1,
         )
 
-        self.ensemble = VotingClassifier(
-            estimators=[("xgb", xgb_clf), ("rf", rf_clf)],
-            voting="soft",
-            weights=[0.6, 0.4],
-        )
-
+        self.ensemble = rf_clf
         self.ensemble.fit(X_features, y_encoded)
 
         # Evaluate
@@ -168,13 +155,18 @@ class SymptomClassifier:
 
     def save(self, path: str) -> None:
         """Save model to disk."""
-        joblib.dump({
-            "ensemble": self.ensemble,
-            "label_encoder": self.label_encoder,
-        }, f"{path}/classifier.pkl")
+        import pickle
+        # Use pickle protocol 4 for better compatibility
+        with open(f"{path}/classifier.pkl", "wb") as f:
+            pickle.dump({
+                "ensemble": self.ensemble,
+                "label_encoder": self.label_encoder,
+            }, f, protocol=4)
 
     def load(self, path: str) -> None:
         """Load model from disk."""
-        data = joblib.load(f"{path}/classifier.pkl")
+        import pickle
+        with open(f"{path}/classifier.pkl", "rb") as f:
+            data = pickle.load(f)
         self.ensemble = data["ensemble"]
         self.label_encoder = data["label_encoder"]
