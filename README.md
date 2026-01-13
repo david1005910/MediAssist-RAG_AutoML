@@ -1,8 +1,8 @@
 # MediAssist AI
 
-[![Build](https://github.com/david1005910/MediAssist-AI/actions/workflows/build.yml/badge.svg)](https://github.com/david1005910/MediAssist-AI/actions/workflows/build.yml)
-[![Test](https://github.com/david1005910/MediAssist-AI/actions/workflows/test.yml/badge.svg)](https://github.com/david1005910/MediAssist-AI/actions/workflows/test.yml)
-[![Lint](https://github.com/david1005910/MediAssist-AI/actions/workflows/lint.yml/badge.svg)](https://github.com/david1005910/MediAssist-AI/actions/workflows/lint.yml)
+[![Build](https://github.com/david1005910/MediAssist-RAG_AutoML/actions/workflows/build.yml/badge.svg)](https://github.com/david1005910/MediAssist-RAG_AutoML/actions/workflows/build.yml)
+[![Test](https://github.com/david1005910/MediAssist-RAG_AutoML/actions/workflows/test.yml/badge.svg)](https://github.com/david1005910/MediAssist-RAG_AutoML/actions/workflows/test.yml)
+[![Lint](https://github.com/david1005910/MediAssist-RAG_AutoML/actions/workflows/lint.yml/badge.svg)](https://github.com/david1005910/MediAssist-RAG_AutoML/actions/workflows/lint.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![React 18](https://img.shields.io/badge/React-18-61DAFB.svg?logo=react)](https://reactjs.org/)
@@ -36,6 +36,16 @@ Qdrant 하이브리드 검색(Sparse 30% + Dense 70%)으로 의학 문헌을 검
 
 ![Literature Search](docs/screenshots/literature-search-screenshot.png)
 
+### RNA Analysis (RNA 서열 분석)
+RNA 서열을 입력하면 BERT-style Transformer 모델이 RNA 유형을 분류하고 관련 질병을 예측합니다.
+
+![RNA Analysis](docs/screenshots/rna-analysis-screenshot.png)
+
+### AutoML Dashboard (AutoML 대시보드)
+Optuna 기반 자동 하이퍼파라미터 최적화를 관리하고 실험 결과를 모니터링합니다.
+
+![AutoML Dashboard](docs/screenshots/automl-dashboard-screenshot.png)
+
 ### Knowledge Graph (지식 그래프)
 Neo4j 기반 의료 지식 그래프를 3D로 탐색하며 질환-증상-치료법 관계를 시각화합니다.
 
@@ -48,76 +58,119 @@ Frosted Metal Aesthetic 디자인이 적용된 로그인 화면입니다.
 
 ## Features
 
-- **증상 분석**: BioBERT + XGBoost 앙상블 모델을 사용한 증상 기반 질병 분류
+- **증상 분석**: BioBERT NER + RandomForest 모델을 사용한 증상 기반 질병 분류 (87.5% accuracy)
 - **의료 이미지 분석**: DenseNet121 기반 흉부 X-ray 분석 + Grad-CAM 시각화
-- **RAG 문헌 검색**: Qdrant 하이브리드 검색 (Sparse BM25 + Dense BioBERT)
+- **RNA 서열 분석**: BERT-style Transformer 기반 RNA 서열 질병 예측 (mRNA, siRNA, circRNA, lncRNA 지원)
+- **AutoML 시스템**: Optuna 기반 하이퍼파라미터 최적화 및 앙상블 모델 자동 생성
+- **RAG 문헌 검색**: ChromaDB 하이브리드 검색 (Sparse BM25 + Dense BioBERT)
 - **지식 그래프**: Neo4j 기반 질환-증상-치료법 관계 시각화
 - **위험도 평가**: 환자 상태에 따른 위험도 점수 산출
 
 ## Tech Stack
 
-- **Backend**: Python 3.11+, FastAPI, SQLAlchemy
-- **Frontend**: React 18, TypeScript, TailwindCSS, Three.js
-- **ML/AI**: PyTorch, XGBoost, BioBERT, DenseNet121
-- **Vector DB**: Qdrant (Hybrid Search)
+- **Backend**: Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), Celery + Redis
+- **Frontend**: React 18, TypeScript, TailwindCSS, Zustand, TanStack Query, Three.js
+- **ML/AI**: PyTorch, scikit-learn, BioBERT, DenseNet121, Optuna (AutoML)
+- **Vector DB**: ChromaDB (Hybrid Search)
 - **Graph DB**: Neo4j
 - **Database**: PostgreSQL, Redis
-- **Infrastructure**: Docker, Kubernetes
+- **Infrastructure**: Docker, Kubernetes, GitHub Actions
 
 ## Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/david1005910/MediAssist-AI.git
-cd MediAssist-AI
+git clone https://github.com/david1005910/MediAssist-RAG_AutoML.git
+cd MediAssist-RAG_AutoML
 
 # Copy environment file
 cp .env.example .env
 
-# Start development services
-make dev
+# Install Python dependencies
+pip install -r requirements.txt
 
-# Install dependencies
-make install
+# Install frontend dependencies
+cd frontend && npm install && cd ..
 
-# Run the analysis service
-make run-analysis
+# Run the analysis service (port 8003)
+cd services/analysis && uvicorn app.main:app --reload --port 8003
 
-# Run the frontend
-make run-frontend
+# Run the frontend (port 3003) in another terminal
+cd frontend && npm run dev
+```
+
+## Running Tests
+
+```bash
+# Run all tests (74 tests)
+PYTHONPATH=$PWD pytest -v
+
+# Run specific test modules
+pytest tests/test_symptom_classifier.py -v
+pytest tests/test_rna_predictor.py -v
+pytest tests/test_automl.py -v
 ```
 
 ## Project Structure
 
 ```
-MediAssist-AI/
-├── services/           # Microservices
-│   ├── auth/          # Authentication service
-│   ├── patient/       # Patient management
-│   ├── analysis/      # ML analysis service
-│   └── report/        # Report generation
-├── models/            # ML models
-│   ├── symptom_classifier/  # BioBERT + XGBoost
-│   ├── image_analyzer/      # DenseNet121 + Grad-CAM
-│   └── risk_predictor/      # Risk assessment
-├── rag/               # RAG system
-│   ├── embedding/     # BioBERT embeddings
-│   ├── retrieval/     # Hybrid search
-│   ├── reranking/     # Cross-encoder
-│   └── generation/    # Answer generation
-├── frontend/          # React application
-├── common/            # Shared code
-├── tests/             # Tests
-├── docs/              # Documentation
-│   └── screenshots/   # UI screenshots
-└── k8s/               # Kubernetes configs
+MediAssist-RAG_AutoML/
+├── services/              # Microservices
+│   ├── auth/             # Authentication service
+│   ├── patient/          # Patient management
+│   ├── analysis/         # ML analysis service (symptom, image, RNA, AutoML)
+│   └── report/           # Report generation
+├── models/               # ML models
+│   ├── symptom_classifier/   # BioBERT NER + RandomForest
+│   ├── image_analyzer/       # DenseNet121 + Grad-CAM
+│   ├── risk_predictor/       # Risk assessment
+│   ├── rna_predictor/        # RNA sequence disease prediction
+│   └── automl/               # AutoML system (Optuna + ensemble)
+├── rag/                  # RAG system
+│   ├── embedding/        # BioBERT embeddings
+│   ├── retrieval/        # Hybrid search (dense + BM25)
+│   ├── reranking/        # Cross-encoder reranker
+│   └── generation/       # LLM integration
+├── frontend/             # React application
+│   ├── src/pages/        # Analysis pages (Symptom, Image, RNA, AutoML)
+│   └── src/stores/       # Zustand state management
+├── common/               # Shared code (database, models, schemas)
+├── tests/                # Unit tests (74 tests)
+├── test_data/            # Sample test data
+├── docs/                 # Documentation
+│   └── screenshots/      # UI screenshots
+└── k8s/                  # Kubernetes configs
 ```
 
 ## API Documentation
 
 After starting the services, API documentation is available at:
-- Auth Service: http://localhost:8001/docs
 - Analysis Service: http://localhost:8003/docs
+
+### Key API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/symptom/analyze` | POST | Analyze symptoms and predict diseases |
+| `/api/v1/symptom/ner` | POST | Extract symptoms from natural language |
+| `/api/v1/image/analyze` | POST | Analyze chest X-ray images |
+| `/api/v1/rna/analyze` | POST | Analyze RNA sequences for disease prediction |
+| `/api/v1/rna/batch` | POST | Batch RNA sequence analysis |
+| `/api/v1/automl/experiments` | POST | Create AutoML experiment |
+| `/api/v1/automl/experiments/{id}` | GET | Get experiment status |
+| `/api/v1/automl/experiments/{id}/trials` | GET | List experiment trials |
+| `/api/v1/rag/search` | POST | Search medical literature |
+| `/api/v1/rag/qa` | POST | RAG-based question answering |
+
+## Model Performance
+
+| Model | Metric | Target | Achieved |
+|-------|--------|--------|----------|
+| Symptom Classifier | Accuracy | ≥ 85% | 87.5% |
+| RNA Predictor | Type Accuracy | ≥ 90% | 92% |
+| RNA Predictor | Disease F1 | ≥ 0.75 | 0.84 |
+| Image Analyzer | AUC-ROC | ≥ 0.90 | - |
+| RAG System | Relevance | ≥ 0.70 | - |
 
 ## Design
 
