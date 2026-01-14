@@ -160,21 +160,21 @@ export default function LiteratureSearch() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="metal-header">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="metal-header px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="text-metal-text-muted hover:text-metal-text-light transition-colors">
+            <Link to="/dashboard" className="text-white/70 hover:text-white transition-colors">
               ← 대시보드
             </Link>
-            <h1 className="text-xl font-bold text-metal-text-light">의학 문헌 검색</h1>
+            <h1 className="text-xl font-bold text-white">의학 문헌 검색</h1>
           </div>
           {stats && (
-            <div className="text-sm text-metal-text-muted flex items-center gap-3">
+            <div className="text-sm text-white/70 flex items-center gap-3">
               <span>문헌 수: {stats.document_count}개</span>
               {stats.search_method && (
-                <span className="px-2 py-1 rounded text-xs" style={{ background: 'linear-gradient(180deg, #9B59B6 0%, #8E44AD 100%)', color: '#FFF' }}>
+                <span className="px-2 py-1 rounded text-xs" style={{ background: 'rgba(255,255,255,0.2)', color: '#FFF' }}>
                   {stats.search_method}
                 </span>
               )}

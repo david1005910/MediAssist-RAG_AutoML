@@ -51,13 +51,13 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 p-8 metal-card">
         <div>
-          <h2 className="text-center text-3xl font-bold text-metal-text-light">
+          <h2 className="text-center text-3xl font-bold text-metal-gradient">
             MediAssist AI
           </h2>
-          <p className="mt-2 text-center text-sm text-metal-text-muted">
+          <p className="mt-2 text-center text-sm text-metal-text-mid">
             의료 진단 보조 시스템
           </p>
         </div>

@@ -15,12 +15,12 @@ export default function Dashboard() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="metal-header">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="metal-header px-4 py-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-bold text-metal-text-light">MediAssist AI</h1>
+            <h1 className="text-xl font-bold text-white">MediAssist AI</h1>
             {health && (
               <span className="flex items-center gap-2 text-xs metal-badge metal-badge-green">
                 <span className="w-2 h-2 rounded-full metal-status-online"></span>
@@ -29,10 +29,10 @@ export default function Dashboard() {
             )}
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-metal-text-mid">{user?.name || '사용자'}</span>
+            <span className="text-sm text-white/70">{user?.name || '사용자'}</span>
             <button
               onClick={logout}
-              className="text-sm px-3 py-1.5 metal-btn-secondary"
+              className="text-sm px-3 py-1.5 metal-btn"
             >
               로그아웃
             </button>

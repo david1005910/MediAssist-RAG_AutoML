@@ -114,13 +114,13 @@ export default function ImageAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
-      <header className="metal-header">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link to="/dashboard" className="text-metal-text-muted hover:text-metal-text-light transition-colors">
+    <div className="min-h-screen">
+      <header className="metal-header px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
+          <Link to="/dashboard" className="text-white/70 hover:text-white transition-colors">
             ← 대시보드
           </Link>
-          <h1 className="text-xl font-bold text-metal-text-light">의료 이미지 분석</h1>
+          <h1 className="text-xl font-bold text-white">의료 이미지 분석</h1>
         </div>
       </header>
 
