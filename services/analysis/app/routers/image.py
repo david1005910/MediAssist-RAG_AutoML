@@ -202,8 +202,12 @@ async def analyze_image(
         findings = [
             Finding(
                 condition=f["condition"],
+                condition_en=f.get("condition_en"),
                 probability=f["probability"],
-                confidence=f["confidence"]
+                confidence=f["confidence"],
+                description=f.get("description"),
+                clinical_significance=f.get("clinical_significance"),
+                recommendation=f.get("recommendation"),
             )
             for f in result["findings"]
         ]
