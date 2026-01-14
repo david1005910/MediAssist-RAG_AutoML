@@ -50,6 +50,11 @@ export default function Login() {
     setValue('password', 'demo1234')
   }
 
+  const loginWithDemo = () => {
+    setError(null)
+    mutation.mutate({ email: 'demo@mediassist.ai', password: 'demo1234' })
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 p-8 metal-card">
@@ -127,10 +132,11 @@ export default function Login() {
           <p className="text-xs text-metal-text-muted mb-3">비밀번호: demo1234</p>
           <button
             type="button"
-            onClick={fillDemoCredentials}
-            className="w-full text-sm py-2 px-4 metal-btn-secondary"
+            onClick={loginWithDemo}
+            disabled={mutation.isPending}
+            className="w-full text-sm py-2 px-4 metal-btn-secondary disabled:opacity-50"
           >
-            데모 계정으로 로그인
+            {mutation.isPending ? '로그인 중...' : '데모 계정으로 로그인'}
           </button>
         </div>
 
