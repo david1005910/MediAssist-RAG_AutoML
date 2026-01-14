@@ -138,15 +138,15 @@ export default function RNAAnalysis() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#1A1D21]/80 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 metal-header px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="text-metal-text-muted hover:text-metal-text-light transition-colors">
+            <Link to="/dashboard" className="text-white/70 hover:text-white transition-colors">
               ← Dashboard
             </Link>
-            <h1 className="text-xl font-bold text-metal-text-light">RNA 서열 분석</h1>
+            <h1 className="text-xl font-bold text-white">RNA 서열 분석</h1>
           </div>
         </div>
       </header>

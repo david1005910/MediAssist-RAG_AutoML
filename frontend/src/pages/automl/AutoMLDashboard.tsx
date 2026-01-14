@@ -176,19 +176,19 @@ export default function AutoMLDashboard() {
     : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#1A1D21]/80 border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 metal-header px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link to="/dashboard" className="text-metal-text-muted hover:text-metal-text-light transition-colors">
+            <Link to="/dashboard" className="text-white/70 hover:text-white transition-colors">
               ← Dashboard
             </Link>
-            <h1 className="text-xl font-bold text-metal-text-light">AutoML Experiments</h1>
+            <h1 className="text-xl font-bold text-white">AutoML Experiments</h1>
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-accent-cyan hover:bg-accent-cyan/80 text-black font-semibold rounded-lg transition-colors"
+            className="metal-btn px-4 py-2"
           >
             + New Experiment
           </button>
