@@ -59,8 +59,12 @@ export interface SymptomNERResponse {
 // Image Analysis Types
 export interface ImageFinding {
   condition: string
+  condition_en?: string
   probability: number
   confidence: 'high' | 'medium' | 'low'
+  description?: string
+  clinical_significance?: string
+  recommendation?: string
 }
 
 export interface ImageQuality {

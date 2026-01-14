@@ -14,9 +14,13 @@ class ImageQuality(BaseModel):
 
 class Finding(BaseModel):
     """Single finding from image analysis."""
-    condition: str = Field(description="Detected condition name")
+    condition: str = Field(description="Detected condition name (Korean)")
+    condition_en: Optional[str] = Field(default=None, description="Detected condition name (English)")
     probability: float = Field(ge=0, le=1, description="Detection probability")
     confidence: str = Field(description="Confidence level: high/medium/low")
+    description: Optional[str] = Field(default=None, description="Detailed description of the condition")
+    clinical_significance: Optional[str] = Field(default=None, description="Clinical significance")
+    recommendation: Optional[str] = Field(default=None, description="Medical recommendations")
 
 
 class ImageAnalysisResponse(BaseModel):
