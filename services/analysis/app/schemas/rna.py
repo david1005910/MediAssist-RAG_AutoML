@@ -76,6 +76,12 @@ class DiseasePrediction(BaseModel):
     probability: float = Field(..., ge=0, le=1, description="Prediction probability")
     confidence: str = Field(..., description="Confidence level: high, medium, low")
     description: Optional[str] = Field(default=None, description="Disease description")
+    clinical_significance: Optional[str] = Field(
+        default=None, description="Clinical significance of the finding"
+    )
+    recommendation: Optional[str] = Field(
+        default=None, description="Medical recommendations"
+    )
     related_genes: List[str] = Field(default_factory=list, description="Related genes")
 
 
@@ -158,6 +164,11 @@ class DiseaseInfo(BaseModel):
     name_en: str = Field(..., description="Disease name (English)")
     icd_code: str = Field(..., description="ICD-10 code")
     description: Optional[str] = Field(default=None, description="Disease description")
+    clinical_significance: Optional[str] = Field(
+        default=None, description="Clinical significance"
+    )
+    recommendation: Optional[str] = Field(default=None, description="Recommendations")
+    related_genes: List[str] = Field(default_factory=list, description="Related genes")
 
 
 class RNAFileUploadResponse(BaseModel):

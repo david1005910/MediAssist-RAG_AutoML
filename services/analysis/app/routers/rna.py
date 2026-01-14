@@ -79,57 +79,133 @@ RNA_TYPES = [
     ),
 ]
 
-# Detectable diseases
+# Detectable diseases with detailed descriptions
 DISEASES = [
     DiseaseInfo(
         name="정상/저위험",
         name_en="Normal/Low Risk",
         icd_code="N/A",
-        description="정상 범위 또는 저위험 상태",
+        description="분석된 RNA 서열이 정상 범위 내에 있으며, 알려진 병원성 변이가 감지되지 않았습니다.",
+        clinical_significance="임상적으로 유의미한 이상 소견 없음",
+        recommendation="정기적인 건강 검진을 권장합니다.",
+        related_genes=[],
     ),
     DiseaseInfo(
         name="RNA 변이 관련 질환",
         name_en="RNA Mutation Related Disease",
         icd_code="Q89.9",
-        description="RNA 변이로 인한 유전적 질환",
+        description="RNA 서열에서 단백질 기능에 영향을 줄 수 있는 변이가 감지되었습니다. 스플라이싱 이상, 코돈 변이, 또는 조절 영역 변화가 포함될 수 있습니다.",
+        clinical_significance="유전자 발현 및 단백질 합성에 영향을 미칠 수 있는 변이",
+        recommendation="유전 상담 및 추가 분자 진단 검사를 권장합니다.",
+        related_genes=["BRCA1", "BRCA2", "TP53", "MLH1", "MSH2"],
     ),
     DiseaseInfo(
         name="siRNA 치료 반응 예측",
         name_en="siRNA Therapy Response Prediction",
         icd_code="Z51.1",
-        description="siRNA 기반 치료에 대한 반응 예측",
+        description="이 RNA 서열은 siRNA(소간섭 RNA) 치료제의 표적이 될 수 있습니다. siRNA는 특정 mRNA를 분해하여 질병 유발 단백질의 생성을 억제합니다.",
+        clinical_significance="RNA 간섭(RNAi) 기반 치료의 잠재적 표적",
+        recommendation="siRNA 치료제 임상시험 참여 가능성을 전문의와 상담하세요.",
+        related_genes=["VEGF", "KRAS", "BCL2", "MYC", "EGFR"],
     ),
     DiseaseInfo(
         name="ASO 효능 예측",
         name_en="ASO Efficacy Prediction",
         icd_code="Z51.1",
-        description="안티센스 올리고뉴클레오타이드 치료 효능",
+        description="안티센스 올리고뉴클레오타이드(ASO) 치료에 적합한 표적 서열입니다. ASO는 특정 RNA에 결합하여 스플라이싱을 조절하거나 mRNA를 분해합니다.",
+        clinical_significance="ASO 기반 치료제(예: 누시너센, 에테플리르센)의 잠재적 적용 대상",
+        recommendation="ASO 치료 가능성에 대해 신경과 또는 유전학 전문의와 상담하세요.",
+        related_genes=["SMN1", "SMN2", "DMD", "HTT", "SOD1"],
     ),
     DiseaseInfo(
         name="UTR 변이 병원성",
         name_en="UTR Variant Pathogenicity",
         icd_code="Q99.8",
-        description="비번역 영역(UTR) 변이의 병원성",
+        description="5' 또는 3' 비번역 영역(UTR)에서 병원성 변이가 감지되었습니다. UTR 변이는 mRNA 안정성, 번역 효율, 또는 microRNA 결합에 영향을 줄 수 있습니다.",
+        clinical_significance="유전자 발현 조절 이상으로 인한 질환 위험",
+        recommendation="기능적 영향 평가를 위한 추가 검사를 권장합니다.",
+        related_genes=["FMR1", "DMPK", "APP", "MAPT"],
     ),
     DiseaseInfo(
         name="유전성 근육 질환",
         name_en="Hereditary Muscle Disease",
         icd_code="G71.9",
-        description="근육 조직에 영향을 미치는 유전성 질환",
+        description="근이영양증, 근무력증, 또는 선천성 근병증과 관련된 RNA 이상이 감지되었습니다. 근육 단백질 생성 또는 기능에 영향을 미치는 변이입니다.",
+        clinical_significance="진행성 근력 약화, 근위축, 호흡 기능 저하 위험",
+        recommendation="신경근육 전문의 상담 및 유전자 검사를 권장합니다. 물리치료 및 호흡 관리가 필요할 수 있습니다.",
+        related_genes=["DMD", "SMN1", "DMPK", "RYR1", "MTM1", "LMNA"],
     ),
     DiseaseInfo(
         name="신경퇴행성 질환",
         name_en="Neurodegenerative Disease",
         icd_code="G31.9",
-        description="신경 세포의 점진적 퇴화 질환",
+        description="알츠하이머병, 파킨슨병, 헌팅턴병, 또는 근위축성측삭경화증(ALS)과 관련된 RNA 패턴이 감지되었습니다. 신경세포의 점진적 손실을 초래할 수 있습니다.",
+        clinical_significance="인지 기능 저하, 운동 장애, 또는 행동 변화 위험",
+        recommendation="신경과 전문의와 조기 상담을 권장합니다. 조기 개입이 질병 진행을 늦출 수 있습니다.",
+        related_genes=["APP", "PSEN1", "PSEN2", "SNCA", "HTT", "SOD1", "C9orf72", "MAPT"],
     ),
     DiseaseInfo(
         name="암 관련 RNA 이상",
         name_en="Cancer-related RNA Abnormality",
         icd_code="C80.1",
-        description="암 발생 및 진행과 관련된 RNA 이상",
+        description="종양 억제 유전자 또는 암 유전자의 RNA에서 이상이 감지되었습니다. 비정상적인 발현, 스플라이싱 변이, 또는 융합 전사체가 포함될 수 있습니다.",
+        clinical_significance="세포 증식, 세포사멸 회피, 또는 전이 위험 증가",
+        recommendation="종양 전문의와 상담하여 추가 진단 검사(조직검사, 영상검사)를 고려하세요.",
+        related_genes=["TP53", "BRCA1", "BRCA2", "KRAS", "EGFR", "ALK", "ROS1", "MYC", "BCL2"],
     ),
 ]
+
+# Detailed disease information for predictions
+DISEASE_DETAILS = {
+    "정상/저위험": {
+        "description": "분석된 RNA 서열이 정상 범위 내에 있으며, 알려진 병원성 변이가 감지되지 않았습니다.",
+        "clinical_significance": "임상적으로 유의미한 이상 소견 없음",
+        "recommendation": "정기적인 건강 검진을 권장합니다.",
+        "related_genes": [],
+    },
+    "RNA 변이 관련 질환": {
+        "description": "RNA 서열에서 단백질 기능에 영향을 줄 수 있는 변이가 감지되었습니다. 스플라이싱 이상, 코돈 변이, 또는 조절 영역 변화가 포함될 수 있습니다.",
+        "clinical_significance": "유전자 발현 및 단백질 합성에 영향을 미칠 수 있는 변이",
+        "recommendation": "유전 상담 및 추가 분자 진단 검사를 권장합니다.",
+        "related_genes": ["BRCA1", "BRCA2", "TP53", "MLH1", "MSH2"],
+    },
+    "siRNA 치료 반응 예측": {
+        "description": "이 RNA 서열은 siRNA(소간섭 RNA) 치료제의 표적이 될 수 있습니다. siRNA는 특정 mRNA를 분해하여 질병 유발 단백질의 생성을 억제합니다.",
+        "clinical_significance": "RNA 간섭(RNAi) 기반 치료의 잠재적 표적",
+        "recommendation": "siRNA 치료제 임상시험 참여 가능성을 전문의와 상담하세요.",
+        "related_genes": ["VEGF", "KRAS", "BCL2", "MYC", "EGFR"],
+    },
+    "ASO 효능 예측": {
+        "description": "안티센스 올리고뉴클레오타이드(ASO) 치료에 적합한 표적 서열입니다. ASO는 특정 RNA에 결합하여 스플라이싱을 조절하거나 mRNA를 분해합니다.",
+        "clinical_significance": "ASO 기반 치료제(예: 누시너센, 에테플리르센)의 잠재적 적용 대상",
+        "recommendation": "ASO 치료 가능성에 대해 신경과 또는 유전학 전문의와 상담하세요.",
+        "related_genes": ["SMN1", "SMN2", "DMD", "HTT", "SOD1"],
+    },
+    "UTR 변이 병원성": {
+        "description": "5' 또는 3' 비번역 영역(UTR)에서 병원성 변이가 감지되었습니다. UTR 변이는 mRNA 안정성, 번역 효율, 또는 microRNA 결합에 영향을 줄 수 있습니다.",
+        "clinical_significance": "유전자 발현 조절 이상으로 인한 질환 위험",
+        "recommendation": "기능적 영향 평가를 위한 추가 검사를 권장합니다.",
+        "related_genes": ["FMR1", "DMPK", "APP", "MAPT"],
+    },
+    "유전성 근육 질환": {
+        "description": "근이영양증, 근무력증, 또는 선천성 근병증과 관련된 RNA 이상이 감지되었습니다. 근육 단백질 생성 또는 기능에 영향을 미치는 변이입니다.",
+        "clinical_significance": "진행성 근력 약화, 근위축, 호흡 기능 저하 위험",
+        "recommendation": "신경근육 전문의 상담 및 유전자 검사를 권장합니다. 물리치료 및 호흡 관리가 필요할 수 있습니다.",
+        "related_genes": ["DMD", "SMN1", "DMPK", "RYR1", "MTM1", "LMNA"],
+    },
+    "신경퇴행성 질환": {
+        "description": "알츠하이머병, 파킨슨병, 헌팅턴병, 또는 근위축성측삭경화증(ALS)과 관련된 RNA 패턴이 감지되었습니다. 신경세포의 점진적 손실을 초래할 수 있습니다.",
+        "clinical_significance": "인지 기능 저하, 운동 장애, 또는 행동 변화 위험",
+        "recommendation": "신경과 전문의와 조기 상담을 권장합니다. 조기 개입이 질병 진행을 늦출 수 있습니다.",
+        "related_genes": ["APP", "PSEN1", "PSEN2", "SNCA", "HTT", "SOD1", "C9orf72", "MAPT"],
+    },
+    "암 관련 RNA 이상": {
+        "description": "종양 억제 유전자 또는 암 유전자의 RNA에서 이상이 감지되었습니다. 비정상적인 발현, 스플라이싱 변이, 또는 융합 전사체가 포함될 수 있습니다.",
+        "clinical_significance": "세포 증식, 세포사멸 회피, 또는 전이 위험 증가",
+        "recommendation": "종양 전문의와 상담하여 추가 진단 검사(조직검사, 영상검사)를 고려하세요.",
+        "related_genes": ["TP53", "BRCA1", "BRCA2", "KRAS", "EGFR", "ALK", "ROS1", "MYC", "BCL2"],
+    },
+}
 
 
 def normalize_sequence(sequence: str) -> str:
@@ -200,6 +276,160 @@ def find_motifs(sequence: str) -> List[str]:
     return motifs
 
 
+def get_disease_predictions_for_rna_type(rna_type: str, gc_content: float, length: int) -> List[DiseasePrediction]:
+    """Generate disease predictions based on RNA type and sequence characteristics."""
+    predictions = []
+
+    # Base normal/low-risk prediction
+    normal_details = DISEASE_DETAILS["정상/저위험"]
+    normal_prob = 0.65 if gc_content >= 30 and gc_content <= 70 else 0.45
+
+    predictions.append(DiseasePrediction(
+        disease="정상/저위험",
+        disease_en="Normal/Low Risk",
+        icd_code="N/A",
+        probability=normal_prob,
+        confidence="high" if normal_prob > 0.6 else "medium",
+        description=normal_details["description"],
+        clinical_significance=normal_details["clinical_significance"],
+        recommendation=normal_details["recommendation"],
+        related_genes=normal_details["related_genes"],
+    ))
+
+    # RNA type specific predictions
+    if rna_type == "mRNA":
+        # mRNA - potential cancer or genetic disease markers
+        cancer_details = DISEASE_DETAILS["암 관련 RNA 이상"]
+        mutation_details = DISEASE_DETAILS["RNA 변이 관련 질환"]
+
+        predictions.append(DiseasePrediction(
+            disease="암 관련 RNA 이상",
+            disease_en="Cancer-related RNA Abnormality",
+            icd_code="C80.1",
+            probability=0.18,
+            confidence="medium",
+            description=cancer_details["description"],
+            clinical_significance=cancer_details["clinical_significance"],
+            recommendation=cancer_details["recommendation"],
+            related_genes=cancer_details["related_genes"],
+        ))
+        predictions.append(DiseasePrediction(
+            disease="RNA 변이 관련 질환",
+            disease_en="RNA Mutation Related Disease",
+            icd_code="Q89.9",
+            probability=0.12,
+            confidence="low",
+            description=mutation_details["description"],
+            clinical_significance=mutation_details["clinical_significance"],
+            recommendation=mutation_details["recommendation"],
+            related_genes=mutation_details["related_genes"],
+        ))
+
+    elif rna_type == "siRNA":
+        # siRNA - therapy response predictions
+        sirna_details = DISEASE_DETAILS["siRNA 치료 반응 예측"]
+        aso_details = DISEASE_DETAILS["ASO 효능 예측"]
+
+        predictions.append(DiseasePrediction(
+            disease="siRNA 치료 반응 예측",
+            disease_en="siRNA Therapy Response Prediction",
+            icd_code="Z51.1",
+            probability=0.25,
+            confidence="medium",
+            description=sirna_details["description"],
+            clinical_significance=sirna_details["clinical_significance"],
+            recommendation=sirna_details["recommendation"],
+            related_genes=sirna_details["related_genes"],
+        ))
+        predictions.append(DiseasePrediction(
+            disease="ASO 효능 예측",
+            disease_en="ASO Efficacy Prediction",
+            icd_code="Z51.1",
+            probability=0.10,
+            confidence="low",
+            description=aso_details["description"],
+            clinical_significance=aso_details["clinical_significance"],
+            recommendation=aso_details["recommendation"],
+            related_genes=aso_details["related_genes"],
+        ))
+
+    elif rna_type == "circRNA":
+        # circRNA - regulatory function disorders
+        neuro_details = DISEASE_DETAILS["신경퇴행성 질환"]
+        cancer_details = DISEASE_DETAILS["암 관련 RNA 이상"]
+
+        predictions.append(DiseasePrediction(
+            disease="신경퇴행성 질환",
+            disease_en="Neurodegenerative Disease",
+            icd_code="G31.9",
+            probability=0.15,
+            confidence="low",
+            description=neuro_details["description"],
+            clinical_significance=neuro_details["clinical_significance"],
+            recommendation=neuro_details["recommendation"],
+            related_genes=neuro_details["related_genes"],
+        ))
+        predictions.append(DiseasePrediction(
+            disease="암 관련 RNA 이상",
+            disease_en="Cancer-related RNA Abnormality",
+            icd_code="C80.1",
+            probability=0.12,
+            confidence="low",
+            description=cancer_details["description"],
+            clinical_significance=cancer_details["clinical_significance"],
+            recommendation=cancer_details["recommendation"],
+            related_genes=cancer_details["related_genes"],
+        ))
+
+    elif rna_type == "lncRNA":
+        # lncRNA - various regulatory disorders
+        muscle_details = DISEASE_DETAILS["유전성 근육 질환"]
+        cancer_details = DISEASE_DETAILS["암 관련 RNA 이상"]
+        utr_details = DISEASE_DETAILS["UTR 변이 병원성"]
+
+        predictions.append(DiseasePrediction(
+            disease="암 관련 RNA 이상",
+            disease_en="Cancer-related RNA Abnormality",
+            icd_code="C80.1",
+            probability=0.20,
+            confidence="medium",
+            description=cancer_details["description"],
+            clinical_significance=cancer_details["clinical_significance"],
+            recommendation=cancer_details["recommendation"],
+            related_genes=cancer_details["related_genes"],
+        ))
+        predictions.append(DiseasePrediction(
+            disease="유전성 근육 질환",
+            disease_en="Hereditary Muscle Disease",
+            icd_code="G71.9",
+            probability=0.08,
+            confidence="low",
+            description=muscle_details["description"],
+            clinical_significance=muscle_details["clinical_significance"],
+            recommendation=muscle_details["recommendation"],
+            related_genes=muscle_details["related_genes"],
+        ))
+
+    else:
+        # Default predictions for unknown types
+        mutation_details = DISEASE_DETAILS["RNA 변이 관련 질환"]
+        predictions.append(DiseasePrediction(
+            disease="RNA 변이 관련 질환",
+            disease_en="RNA Mutation Related Disease",
+            icd_code="Q89.9",
+            probability=0.15,
+            confidence="low",
+            description=mutation_details["description"],
+            clinical_significance=mutation_details["clinical_significance"],
+            recommendation=mutation_details["recommendation"],
+            related_genes=mutation_details["related_genes"],
+        ))
+
+    # Sort by probability descending
+    predictions.sort(key=lambda x: x.probability, reverse=True)
+    return predictions
+
+
 def create_mock_prediction(sequence: str, rna_type: Optional[str] = None) -> RNAAnalysisResponse:
     """Create mock prediction when model is not available."""
     normalized = normalize_sequence(sequence)
@@ -216,27 +446,8 @@ def create_mock_prediction(sequence: str, rna_type: Optional[str] = None) -> RNA
     # Find motifs
     motifs = find_motifs(normalized)
 
-    # Create mock disease predictions
-    disease_predictions = [
-        DiseasePrediction(
-            disease="정상/저위험",
-            disease_en="Normal/Low Risk",
-            icd_code="N/A",
-            probability=0.75,
-            confidence="high",
-            description="정상 범위의 RNA 서열",
-            related_genes=[],
-        ),
-        DiseasePrediction(
-            disease="RNA 변이 관련 질환",
-            disease_en="RNA Mutation Related Disease",
-            icd_code="Q89.9",
-            probability=0.15,
-            confidence="low",
-            description="RNA 변이로 인한 유전적 질환 가능성",
-            related_genes=["BRCA1", "TP53"],
-        ),
-    ]
+    # Create disease predictions based on RNA type
+    disease_predictions = get_disease_predictions_for_rna_type(detected_type, gc_content, length)
 
     # Create risk assessment
     risk_score = min(100, max(0, 100 - gc_content))  # Mock calculation
