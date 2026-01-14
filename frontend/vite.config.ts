@@ -13,23 +13,23 @@ export default defineConfig({
     port: 3003,
     proxy: {
       '/api': {
-        target: 'http://localhost:8003',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
       '/health': {
-        target: 'http://localhost:8003',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
       '/docs': {
-        target: 'http://localhost:8003',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
       '/redoc': {
-        target: 'http://localhost:8003',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
       '/openapi.json': {
-        target: 'http://localhost:8003',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
     },
