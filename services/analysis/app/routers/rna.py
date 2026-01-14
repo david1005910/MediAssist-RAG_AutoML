@@ -449,24 +449,63 @@ def create_mock_prediction(sequence: str, rna_type: Optional[str] = None) -> RNA
     # Create disease predictions based on RNA type
     disease_predictions = get_disease_predictions_for_rna_type(detected_type, gc_content, length)
 
-    # Create risk assessment
-    risk_score = min(100, max(0, 100 - gc_content))  # Mock calculation
-    if risk_score < 25:
+    # Calculate risk score based on disease predictions
+    # Weight non-normal disease probabilities (normal/low-risk is excluded)
+    disease_weights = {
+        "암 관련 RNA 이상": 3.0,
+        "신경퇴행성 질환": 2.5,
+        "유전성 근육 질환": 2.5,
+        "UTR 변이 병원성": 2.0,
+        "RNA 변이 관련 질환": 1.5,
+        "siRNA 치료 반응 예측": 1.0,
+        "ASO 효능 예측": 1.0,
+    }
+
+    weighted_risk = 0.0
+    risk_factors = []
+    for pred in disease_predictions:
+        if pred.disease != "정상/저위험":
+            weight = disease_weights.get(pred.disease, 1.0)
+            contribution = pred.probability * weight * 100
+            weighted_risk += contribution
+            if pred.probability > 0.1:
+                risk_factors.append(f"{pred.disease}: {pred.probability*100:.1f}%")
+
+    # Scale to 0-100 range (max possible weighted risk is around 200)
+    risk_score = min(100, max(0, weighted_risk / 2))
+
+    # Determine risk level based on calculated risk
+    if risk_score < 20:
         risk_level = "low"
-    elif risk_score < 50:
+        pathogenicity = "benign"
+    elif risk_score < 40:
         risk_level = "moderate"
-    elif risk_score < 75:
+        pathogenicity = "likely_benign"
+    elif risk_score < 60:
         risk_level = "high"
+        pathogenicity = "uncertain"
     else:
         risk_level = "critical"
+        pathogenicity = "likely_pathogenic"
+
+    # Add analysis factors
+    risk_factors.insert(0, f"GC 함량: {gc_content:.1f}%")
+    risk_factors.insert(0, f"서열 길이: {length}nt")
+
+    recommendations = []
+    if risk_level in ["high", "critical"]:
+        recommendations.append("전문의 상담을 권장합니다")
+        recommendations.append("추가 유전자 검사 고려")
+    elif risk_level == "moderate":
+        recommendations.append("정기적인 모니터링 권장")
 
     risk_assessment = RNARiskAssessment(
         risk_score=round(risk_score, 2),
         risk_level=risk_level,
-        pathogenicity="benign" if risk_score < 50 else "uncertain",
-        pathogenicity_confidence=0.6,
-        factors=["서열 길이 분석 완료", "GC 함량 분석 완료"],
-        recommendations=["정기적인 모니터링 권장"] if risk_level != "low" else [],
+        pathogenicity=pathogenicity,
+        pathogenicity_confidence=0.7 if risk_level == "low" else 0.5,
+        factors=risk_factors,
+        recommendations=recommendations,
     )
 
     return RNAAnalysisResponse(
@@ -532,13 +571,72 @@ async def analyze_rna(request: RNAAnalysisRequest):
                 }
                 enhanced_predictions.append(enhanced_pred)
 
+            # Enhance risk assessment based on disease predictions
+            disease_weights = {
+                "암 관련 RNA 이상": 3.0,
+                "신경퇴행성 질환": 2.5,
+                "유전성 근육 질환": 2.5,
+                "UTR 변이 병원성": 2.0,
+                "RNA 변이 관련 질환": 1.5,
+                "siRNA 치료 반응 예측": 1.0,
+                "ASO 효능 예측": 1.0,
+            }
+
+            weighted_risk = 0.0
+            risk_factors = []
+            seq_analysis = result["sequence_analysis"]
+            risk_factors.append(f"서열 길이: {seq_analysis.get('length', 0)}nt")
+            risk_factors.append(f"GC 함량: {seq_analysis.get('gc_content', 0):.1f}%")
+
+            for pred in enhanced_predictions:
+                disease_name = pred.get("disease", "")
+                prob = pred.get("probability", 0)
+                if disease_name != "정상/저위험":
+                    weight = disease_weights.get(disease_name, 1.0)
+                    weighted_risk += prob * weight * 100
+                    if prob > 0.1:
+                        risk_factors.append(f"{disease_name}: {prob*100:.1f}%")
+
+            # Calculate enhanced risk score
+            enhanced_risk_score = min(100, max(0, weighted_risk / 2))
+
+            # Determine risk level
+            if enhanced_risk_score < 20:
+                risk_level = "low"
+                pathogenicity = "benign"
+            elif enhanced_risk_score < 40:
+                risk_level = "moderate"
+                pathogenicity = "likely_benign"
+            elif enhanced_risk_score < 60:
+                risk_level = "high"
+                pathogenicity = "uncertain"
+            else:
+                risk_level = "critical"
+                pathogenicity = "likely_pathogenic"
+
+            recommendations = []
+            if risk_level in ["high", "critical"]:
+                recommendations.append("전문의 상담을 권장합니다")
+                recommendations.append("추가 유전자 검사 고려")
+            elif risk_level == "moderate":
+                recommendations.append("정기적인 모니터링 권장")
+
+            enhanced_risk_assessment = RNARiskAssessment(
+                risk_score=round(enhanced_risk_score, 2),
+                risk_level=risk_level,
+                pathogenicity=pathogenicity,
+                pathogenicity_confidence=0.7 if risk_level == "low" else 0.5,
+                factors=risk_factors,
+                recommendations=recommendations,
+            )
+
             # Convert to response model
             return RNAAnalysisResponse(
                 sequence_analysis=SequenceAnalysis(**result["sequence_analysis"]),
                 disease_predictions=[
                     DiseasePrediction(**pred) for pred in enhanced_predictions
                 ],
-                risk_assessment=RNARiskAssessment(**result["risk_assessment"]),
+                risk_assessment=enhanced_risk_assessment,
                 disclaimer=result.get("disclaimer", "이 분석 결과는 참고용이며, 정확한 진단을 위해 반드시 의료 전문가와 상담하세요."),
             )
         except Exception as e:
