@@ -26,3 +26,6 @@ langchain-community>=0.0.10
 langchain-openai>=0.0.2
 chromadb>=0.4.0
 sentence-transformers>=2.2.0
+
+# Graph Database
+neo4j>=5.15.0

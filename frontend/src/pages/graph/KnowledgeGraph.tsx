@@ -78,7 +78,7 @@ export default function KnowledgeGraph() {
 
   const checkNeo4jStatus = async () => {
     try {
-      const response = await fetch('http://localhost:8003/api/v1/graph/status')
+      const response = await fetch('/api/v1/graph/status')
       const data = await response.json()
       setNeo4jStatus(data)
       if (data.connected) {
@@ -91,7 +91,7 @@ export default function KnowledgeGraph() {
 
   const loadNeo4jSchema = async () => {
     try {
-      const response = await fetch('http://localhost:8003/api/v1/graph/schema')
+      const response = await fetch('/api/v1/graph/schema')
       if (response.ok) {
         const data = await response.json()
         setSchema(data)
@@ -106,8 +106,8 @@ export default function KnowledgeGraph() {
     setError(null)
     try {
       const url = nodeType
-        ? `http://localhost:8003/api/v1/graph/nodes?node_type=${nodeType}&limit=100`
-        : 'http://localhost:8003/api/v1/graph/nodes?limit=100'
+        ? `/api/v1/graph/nodes?node_type=${nodeType}&limit=100`
+        : '/api/v1/graph/nodes?limit=100'
 
       const response = await fetch(url)
       if (!response.ok) throw new Error('그래프 로드 실패')
@@ -131,7 +131,7 @@ export default function KnowledgeGraph() {
     setError(null)
     try {
       const response = await fetch(
-        `http://localhost:8003/api/v1/graph/search?query=${encodeURIComponent(searchQuery)}&limit=50`
+        `/api/v1/graph/search?query=${encodeURIComponent(searchQuery)}&limit=50`
       )
 
       if (response.ok) {
@@ -272,13 +272,13 @@ export default function KnowledgeGraph() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1A1D21] to-[#15171A]">
-      <header className="metal-header">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link to="/dashboard" className="text-metal-text-muted hover:text-metal-text-light transition-colors">
+    <div className="min-h-screen">
+      <header className="metal-header px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
+          <Link to="/dashboard" className="text-white/70 hover:text-white transition-colors">
             ← 대시보드
           </Link>
-          <h1 className="text-xl font-bold text-metal-text-light">의료 지식 그래프</h1>
+          <h1 className="text-xl font-bold text-white">의료 지식 그래프</h1>
           <div className="flex items-center gap-3 ml-auto">
             {neo4jStatus && (
               <span className={`flex items-center gap-2 text-xs px-2 py-1 rounded-metal-sm ${neo4jStatus.connected ? 'metal-badge-green' : 'metal-badge-red'}`}>
