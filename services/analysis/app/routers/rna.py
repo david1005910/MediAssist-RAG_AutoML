@@ -518,11 +518,25 @@ async def analyze_rna(request: RNAAnalysisRequest):
         try:
             result = predictor.predict(normalized, request.rna_type)
 
+            # Enhance predictions with detailed information
+            enhanced_predictions = []
+            for pred in result["disease_predictions"]:
+                disease_name = pred.get("disease", "")
+                details = DISEASE_DETAILS.get(disease_name, {})
+                enhanced_pred = {
+                    **pred,
+                    "description": pred.get("description") or details.get("description"),
+                    "clinical_significance": pred.get("clinical_significance") or details.get("clinical_significance"),
+                    "recommendation": pred.get("recommendation") or details.get("recommendation"),
+                    "related_genes": pred.get("related_genes") or details.get("related_genes", []),
+                }
+                enhanced_predictions.append(enhanced_pred)
+
             # Convert to response model
             return RNAAnalysisResponse(
                 sequence_analysis=SequenceAnalysis(**result["sequence_analysis"]),
                 disease_predictions=[
-                    DiseasePrediction(**pred) for pred in result["disease_predictions"]
+                    DiseasePrediction(**pred) for pred in enhanced_predictions
                 ],
                 risk_assessment=RNARiskAssessment(**result["risk_assessment"]),
                 disclaimer=result.get("disclaimer", "이 분석 결과는 참고용이며, 정확한 진단을 위해 반드시 의료 전문가와 상담하세요."),
