@@ -156,14 +156,14 @@ export default function RNAAnalysis() {
           {/* Input Section */}
           <div className="space-y-6">
             {/* Sequence Input */}
-            <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+            <div className="metal-card p-6">
               <h2 className="text-lg font-semibold text-metal-text-light mb-4">RNA 서열 입력</h2>
 
               <textarea
                 value={sequence}
                 onChange={(e) => setSequence(e.target.value.toUpperCase().replace(/[^AUGCT\s]/gi, ''))}
                 placeholder="RNA 서열을 입력하세요 (A, U, G, C)..."
-                className="w-full h-40 px-4 py-3 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light font-mono text-sm placeholder-metal-text-muted focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 resize-none"
+                className="w-full h-40 px-4 py-3 metal-input font-mono text-sm resize-none"
               />
 
               {/* Sequence Stats */}
@@ -180,7 +180,7 @@ export default function RNAAnalysis() {
                 <select
                   value={rnaType}
                   onChange={(e) => setRnaType(e.target.value)}
-                  className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
+                  className="w-full px-4 py-2 metal-select"
                 >
                   {RNA_TYPES.map((type) => (
                     <option key={type.value} value={type.value}>
@@ -192,7 +192,7 @@ export default function RNAAnalysis() {
             </div>
 
             {/* File Upload */}
-            <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+            <div className="metal-card p-6">
               <h2 className="text-lg font-semibold text-metal-text-light mb-4">파일 업로드</h2>
 
               <div className="space-y-4">
@@ -251,7 +251,7 @@ export default function RNAAnalysis() {
             </div>
 
             {/* Sample Data */}
-            <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+            <div className="metal-card p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-metal-text-light">샘플 데이터</h2>
                 <button
@@ -268,7 +268,7 @@ export default function RNAAnalysis() {
                     <button
                       key={sample.id}
                       onClick={() => loadSampleSequence(sample)}
-                      className="w-full text-left p-3 bg-[#1A1D21] hover:bg-[#252930] border border-white/10 rounded-lg transition-colors"
+                      className="w-full text-left p-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors shadow-sm"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-metal-text-light">{sample.name}</span>
@@ -313,7 +313,7 @@ export default function RNAAnalysis() {
             {result ? (
               <>
                 {/* Sequence Analysis */}
-                <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+                <div className="metal-card p-6">
                   <h2 className="text-lg font-semibold text-metal-text-light mb-4">서열 분석</h2>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -352,7 +352,7 @@ export default function RNAAnalysis() {
                 </div>
 
                 {/* Risk Assessment */}
-                <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+                <div className="metal-card p-6">
                   <h2 className="text-lg font-semibold text-metal-text-light mb-4">위험도 평가</h2>
 
                   <div className="flex items-center justify-between mb-4">
@@ -372,7 +372,7 @@ export default function RNAAnalysis() {
                       <span>병원성</span>
                       <span>{result.risk_assessment.pathogenicity}</span>
                     </div>
-                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${getRiskColor(result.risk_assessment.risk_level).replace('text-', 'bg-')}`}
                         style={{ width: `${result.risk_assessment.risk_score}%` }}
@@ -410,12 +410,12 @@ export default function RNAAnalysis() {
                 </div>
 
                 {/* Disease Predictions */}
-                <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6">
+                <div className="metal-card p-6">
                   <h2 className="text-lg font-semibold text-metal-text-light mb-4">질병 예측</h2>
 
                   <div className="space-y-4">
                     {result.disease_predictions.map((pred, idx) => (
-                      <div key={idx} className="border-b border-white/5 pb-4 last:border-0 last:pb-0">
+                      <div key={idx} className="border-b border-gray-200 pb-4 last:border-0 last:pb-0">
                         <div className="flex items-start justify-between">
                           <div>
                             <p className="font-medium text-metal-text-light">{pred.disease}</p>
@@ -434,7 +434,7 @@ export default function RNAAnalysis() {
                             <span>확률</span>
                             <span>{(pred.probability * 100).toFixed(1)}%</span>
                           </div>
-                          <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div
                               className="h-full bg-accent-cyan transition-all"
                               style={{ width: `${pred.probability * 100}%` }}
@@ -489,7 +489,7 @@ export default function RNAAnalysis() {
                 </div>
               </>
             ) : (
-              <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-12 text-center">
+              <div className="metal-card p-12 text-center">
                 <div className="text-4xl mb-4">🧬</div>
                 <h3 className="text-lg font-semibold text-metal-text-light mb-2">RNA 서열을 입력하세요</h3>
                 <p className="text-sm text-metal-text-muted">

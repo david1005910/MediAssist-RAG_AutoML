@@ -246,7 +246,7 @@ export default function LiteratureSearch() {
                 {/* Hybrid Search Info Panel */}
                 <div className="rounded-metal p-4"
                   style={{
-                    background: 'linear-gradient(180deg, #2A2F37 0%, #252930 100%)',
+                    background: 'linear-gradient(145deg, #FFFFFF 0%, #F0F4FF 100%)',
                     border: '1px solid rgba(155, 89, 182, 0.3)'
                   }}>
                   <button
@@ -327,7 +327,7 @@ export default function LiteratureSearch() {
                             key={index}
                             className="rounded-metal p-4 cursor-pointer transition-all hover:shadow-metal"
                             style={{
-                              background: 'linear-gradient(180deg, #2A2F37 0%, #252930 100%)',
+                              background: 'linear-gradient(145deg, #FFFFFF 0%, #F0F4FF 100%)',
                               borderTop: '1px solid rgba(255,255,255,0.08)',
                               borderBottom: '1px solid rgba(0,0,0,0.3)'
                             }}
@@ -382,7 +382,7 @@ export default function LiteratureSearch() {
                             <div className="text-sm text-metal-text-mid mb-3 leading-relaxed whitespace-pre-wrap p-3 rounded-metal" style={{ background: 'rgba(0,0,0,0.2)' }}>
                               {result.content}
                             </div>
-                            <div className="text-xs text-metal-text-muted border-t border-white/10 pt-2">
+                            <div className="text-xs text-metal-text-muted border-t border-gray-200 pt-2">
                               {result.metadata.authors && <span className="font-medium">{result.metadata.authors}</span>}
                               {result.metadata.year && <span> • {result.metadata.year}</span>}
                               {result.metadata.journal && <span> • {result.metadata.journal}</span>}
@@ -453,7 +453,7 @@ export default function LiteratureSearch() {
                                 key={index}
                                 className="rounded-metal p-3 cursor-pointer transition-all hover:shadow-metal"
                                 style={{
-                                  background: 'linear-gradient(180deg, #2A2F37 0%, #252930 100%)',
+                                  background: 'linear-gradient(145deg, #FFFFFF 0%, #F0F4FF 100%)',
                                   borderTop: '1px solid rgba(255,255,255,0.05)'
                                 }}
                                 onClick={() => selectResultForJson(source)}
@@ -566,7 +566,7 @@ export default function LiteratureSearch() {
                           style={{
                             background: selectedSources.includes(source.id)
                               ? 'linear-gradient(180deg, #2A3D2A 0%, #1F2E1F 100%)'
-                              : 'linear-gradient(180deg, #2A2F37 0%, #252930 100%)',
+                              : 'linear-gradient(145deg, #FFFFFF 0%, #F0F4FF 100%)',
                             border: selectedSources.includes(source.id)
                               ? '1px solid rgba(38, 194, 129, 0.3)'
                               : '1px solid rgba(255,255,255,0.05)'
@@ -671,11 +671,11 @@ export default function LiteratureSearch() {
                                 <h3 className="font-medium text-metal-text-light">{source}</h3>
                                 <span className="text-sm text-metal-text-muted">{articles.length}건</span>
                               </div>
-                              <div className="divide-y divide-white/5">
+                              <div className="divide-y divide-gray-200">
                                 {(articles as AcademicArticle[]).map((article, index) => (
                                   <div
                                     key={`${source}-${index}`}
-                                    className="p-4 cursor-pointer transition-all hover:bg-white/5"
+                                    className="p-4 cursor-pointer transition-all hover:bg-gray-50"
                                     onClick={() => selectResultForJson(article)}
                                   >
                                     <h4 className="font-medium text-accent-cyan mb-2">{article.title}</h4>
@@ -738,7 +738,7 @@ export default function LiteratureSearch() {
           {/* Right Panel - JSON Metadata Viewer */}
           <div className="w-80 flex-shrink-0">
             <div className="metal-card sticky top-4">
-              <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <h3 className="font-semibold text-metal-text-light text-sm">JSON 메타데이터</h3>
                 <div className="flex gap-1">
                   <button
@@ -778,7 +778,7 @@ export default function LiteratureSearch() {
                 )}
               </div>
               {selectedJsonData && (
-                <div className="px-4 pb-4 text-xs text-metal-text-muted border-t border-white/5 pt-3">
+                <div className="px-4 pb-4 text-xs text-metal-text-muted border-t border-gray-200 pt-3">
                   <div className="flex justify-between">
                     <span>데이터 크기:</span>
                     <span>{JSON.stringify(selectedJsonData).length.toLocaleString()} bytes</span>

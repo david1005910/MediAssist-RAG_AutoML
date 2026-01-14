@@ -198,19 +198,19 @@ export default function AutoMLDashboard() {
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-4">
+          <div className="metal-card p-4">
             <div className="text-metal-text-muted text-sm">Total Experiments</div>
             <div className="text-2xl font-bold text-metal-text-light">{experiments.length}</div>
           </div>
-          <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-4">
+          <div className="metal-card p-4">
             <div className="text-metal-text-muted text-sm">Running</div>
             <div className="text-2xl font-bold text-blue-400">{runningCount}</div>
           </div>
-          <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-4">
+          <div className="metal-card p-4">
             <div className="text-metal-text-muted text-sm">Completed</div>
             <div className="text-2xl font-bold text-green-400">{completedCount}</div>
           </div>
-          <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-4">
+          <div className="metal-card p-4">
             <div className="text-metal-text-muted text-sm">Best F1 Score</div>
             <div className="text-2xl font-bold text-accent-cyan">
               {bestValue ? bestValue.toFixed(3) : '-'}
@@ -220,7 +220,7 @@ export default function AutoMLDashboard() {
 
         {/* Quick Start Guide */}
         {experiments.length === 0 && (
-          <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10 p-6 mb-8">
+          <div className="metal-card p-6 mb-8">
             <h2 className="text-lg font-semibold text-metal-text-light mb-4">AutoML 시작 가이드</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
@@ -248,7 +248,7 @@ export default function AutoMLDashboard() {
                 </p>
               </div>
             </div>
-            <div className="mt-6 p-4 bg-[#1A1D21] rounded-lg">
+            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
               <h4 className="font-medium text-metal-text-light mb-2">하이퍼파라미터 탐색 범위</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
@@ -273,7 +273,7 @@ export default function AutoMLDashboard() {
         )}
 
         {/* Experiments List */}
-        <div className="bg-gradient-to-b from-[#2A2F37] to-[#252930] rounded-xl border border-white/10">
+        <div className="metal-card">
           <div className="p-4 border-b border-white/10">
             <h2 className="text-lg font-semibold text-metal-text-light">Experiments</h2>
           </div>
@@ -289,7 +289,7 @@ export default function AutoMLDashboard() {
               {experiments.map((experiment) => (
                 <div
                   key={experiment.experiment_id}
-                  className="p-4 hover:bg-white/5 transition-colors"
+                  className="p-4 hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
@@ -385,7 +385,7 @@ export default function AutoMLDashboard() {
                       className={`p-4 rounded-lg border text-left transition-all ${
                         selectedPreset === preset.name
                           ? 'border-accent-cyan bg-accent-cyan/10'
-                          : 'border-white/10 bg-[#1A1D21] hover:border-white/20'
+                          : 'border-gray-200 bg-white hover:border-gray-300'
                       }`}
                     >
                       <div className="flex items-center gap-2 mb-1">
@@ -394,10 +394,10 @@ export default function AutoMLDashboard() {
                       </div>
                       <p className="text-xs text-metal-text-muted">{preset.description}</p>
                       <div className="mt-2 flex gap-2 text-xs">
-                        <span className="px-2 py-0.5 bg-white/5 rounded text-metal-text-mid">
+                        <span className="px-2 py-0.5 bg-gray-100 rounded text-metal-text-mid">
                           {preset.config.n_trials}회
                         </span>
-                        <span className="px-2 py-0.5 bg-white/5 rounded text-metal-text-mid">
+                        <span className="px-2 py-0.5 bg-gray-100 rounded text-metal-text-mid">
                           {preset.config.sampler.toUpperCase()}
                         </span>
                       </div>
@@ -421,7 +421,7 @@ export default function AutoMLDashboard() {
                     type="text"
                     value={config.experiment_name}
                     onChange={(e) => setConfig({ ...config, experiment_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
+                    className="w-full px-4 py-2 metal-input"
                     placeholder="예: rna_disease_v1"
                   />
                 </div>
@@ -430,7 +430,7 @@ export default function AutoMLDashboard() {
                   <textarea
                     value={config.description}
                     onChange={(e) => setConfig({ ...config, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 h-20 resize-none"
+                    className="w-full px-4 py-2 metal-input h-20 resize-none"
                     placeholder="실험 목적을 설명하세요..."
                   />
                 </div>
@@ -446,7 +446,7 @@ export default function AutoMLDashboard() {
                       type="number"
                       value={config.n_trials}
                       onChange={(e) => setConfig({ ...config, n_trials: parseInt(e.target.value) })}
-                      className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
+                      className="w-full px-4 py-2 metal-input"
                       min={1}
                       max={10000}
                     />
@@ -458,7 +458,7 @@ export default function AutoMLDashboard() {
                       type="number"
                       value={config.timeout_hours}
                       onChange={(e) => setConfig({ ...config, timeout_hours: parseFloat(e.target.value) })}
-                      className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
+                      className="w-full px-4 py-2 metal-input"
                       min={0.1}
                       max={720}
                       step={0.5}
@@ -469,7 +469,7 @@ export default function AutoMLDashboard() {
                     <select
                       value={config.sampler}
                       onChange={(e) => setConfig({ ...config, sampler: e.target.value as any })}
-                      className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
+                      className="w-full px-4 py-2 metal-input"
                     >
                       <option value="tpe">TPE (Tree-structured Parzen Estimator)</option>
                       <option value="cma_es">CMA-ES</option>
@@ -481,7 +481,7 @@ export default function AutoMLDashboard() {
                     <select
                       value={config.pruner}
                       onChange={(e) => setConfig({ ...config, pruner: e.target.value as any })}
-                      className="w-full px-4 py-2 bg-[#1A1D21] border border-white/10 rounded-lg text-metal-text-light focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
+                      className="w-full px-4 py-2 metal-input"
                     >
                       <option value="hyperband">Hyperband (권장)</option>
                       <option value="median">Median</option>
@@ -501,7 +501,7 @@ export default function AutoMLDashboard() {
                     id="use_gpu"
                     checked={config.use_gpu}
                     onChange={(e) => setConfig({ ...config, use_gpu: e.target.checked })}
-                    className="rounded border-white/10 bg-[#1A1D21]"
+                    className="rounded border-gray-300 bg-white"
                   />
                   <label htmlFor="use_gpu" className="text-sm text-metal-text-mid">GPU 가속 사용</label>
                 </div>

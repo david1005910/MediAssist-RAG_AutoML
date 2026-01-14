@@ -197,45 +197,45 @@ export default function SymptomAnalysis() {
                   <table className="w-full text-sm border-collapse">
                     <thead>
                       <tr style={{ background: 'linear-gradient(180deg, #2C3036 0%, #23272B 100%)' }}>
-                        <th className="border border-white/10 px-3 py-2 text-left text-metal-text-light">요소</th>
-                        <th className="border border-white/10 px-3 py-2 text-left text-metal-text-light">조건</th>
-                        <th className="border border-white/10 px-3 py-2 text-left text-metal-text-light">점수</th>
+                        <th className="border border-gray-200 px-3 py-2 text-left text-metal-text-light">요소</th>
+                        <th className="border border-gray-200 px-3 py-2 text-left text-metal-text-light">조건</th>
+                        <th className="border border-gray-200 px-3 py-2 text-left text-metal-text-light">점수</th>
                       </tr>
                     </thead>
                     <tbody className="text-metal-text-mid">
                       <tr style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <td className="border border-white/10 px-3 py-2 font-medium">기본 위험도</td>
-                        <td className="border border-white/10 px-3 py-2">질병 위험도 가중치 x 점수 x 100</td>
-                        <td className="border border-white/10 px-3 py-2">계산값</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">기본 위험도</td>
+                        <td className="border border-gray-200 px-3 py-2">질병 위험도 가중치 x 점수 x 100</td>
+                        <td className="border border-gray-200 px-3 py-2">계산값</td>
                       </tr>
                       <tr>
-                        <td className="border border-white/10 px-3 py-2 font-medium">증상 심각도</td>
-                        <td className="border border-white/10 px-3 py-2">최대 심각도 7 이상</td>
-                        <td className="border border-white/10 px-3 py-2 text-orange-400 font-medium">+15점</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">증상 심각도</td>
+                        <td className="border border-gray-200 px-3 py-2">최대 심각도 7 이상</td>
+                        <td className="border border-gray-200 px-3 py-2 text-orange-400 font-medium">+15점</td>
                       </tr>
                       <tr style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <td className="border border-white/10 px-3 py-2 font-medium">지속 기간</td>
-                        <td className="border border-white/10 px-3 py-2">7일 이상 지속</td>
-                        <td className="border border-white/10 px-3 py-2 text-orange-400 font-medium">+10점</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">지속 기간</td>
+                        <td className="border border-gray-200 px-3 py-2">7일 이상 지속</td>
+                        <td className="border border-gray-200 px-3 py-2 text-orange-400 font-medium">+10점</td>
                       </tr>
                       <tr>
-                        <td className="border border-white/10 px-3 py-2 font-medium" rowSpan={2}>나이</td>
-                        <td className="border border-white/10 px-3 py-2">65세 이상</td>
-                        <td className="border border-white/10 px-3 py-2 text-red-400 font-medium">+15점</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium" rowSpan={2}>나이</td>
+                        <td className="border border-gray-200 px-3 py-2">65세 이상</td>
+                        <td className="border border-gray-200 px-3 py-2 text-red-400 font-medium">+15점</td>
                       </tr>
                       <tr>
-                        <td className="border border-white/10 px-3 py-2">5세 이하</td>
-                        <td className="border border-white/10 px-3 py-2 text-orange-400 font-medium">+10점</td>
+                        <td className="border border-gray-200 px-3 py-2">5세 이하</td>
+                        <td className="border border-gray-200 px-3 py-2 text-orange-400 font-medium">+10점</td>
                       </tr>
                       <tr style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <td className="border border-white/10 px-3 py-2 font-medium">기저 질환</td>
-                        <td className="border border-white/10 px-3 py-2">과거 병력 각각</td>
-                        <td className="border border-white/10 px-3 py-2 text-yellow-400 font-medium">+5점</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">기저 질환</td>
+                        <td className="border border-gray-200 px-3 py-2">과거 병력 각각</td>
+                        <td className="border border-gray-200 px-3 py-2 text-yellow-400 font-medium">+5점</td>
                       </tr>
                       <tr>
-                        <td className="border border-white/10 px-3 py-2 font-medium">다중 증상</td>
-                        <td className="border border-white/10 px-3 py-2">5개 이상 증상</td>
-                        <td className="border border-white/10 px-3 py-2 text-yellow-400 font-medium">+5점</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">다중 증상</td>
+                        <td className="border border-gray-200 px-3 py-2">5개 이상 증상</td>
+                        <td className="border border-gray-200 px-3 py-2 text-yellow-400 font-medium">+5점</td>
                       </tr>
                     </tbody>
                   </table>
@@ -251,39 +251,39 @@ export default function SymptomAnalysis() {
                   <table className="w-full text-sm border-collapse">
                     <thead>
                       <tr style={{ background: 'linear-gradient(180deg, #2C3036 0%, #23272B 100%)' }}>
-                        <th className="border border-white/10 px-3 py-2 text-left text-metal-text-light">레벨</th>
-                        <th className="border border-white/10 px-3 py-2 text-left text-metal-text-light">점수 범위</th>
-                        <th className="border border-white/10 px-3 py-2 text-left text-metal-text-light">의미</th>
+                        <th className="border border-gray-200 px-3 py-2 text-left text-metal-text-light">레벨</th>
+                        <th className="border border-gray-200 px-3 py-2 text-left text-metal-text-light">점수 범위</th>
+                        <th className="border border-gray-200 px-3 py-2 text-left text-metal-text-light">의미</th>
                       </tr>
                     </thead>
                     <tbody className="text-metal-text-mid">
                       <tr style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <td className="border border-white/10 px-3 py-2">
+                        <td className="border border-gray-200 px-3 py-2">
                           <span className="px-2 py-1 metal-badge-red rounded font-medium">CRITICAL</span>
                         </td>
-                        <td className="border border-white/10 px-3 py-2 font-medium">70점 이상</td>
-                        <td className="border border-white/10 px-3 py-2">즉시 의료 조치 권장</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">70점 이상</td>
+                        <td className="border border-gray-200 px-3 py-2">즉시 의료 조치 권장</td>
                       </tr>
                       <tr>
-                        <td className="border border-white/10 px-3 py-2">
+                        <td className="border border-gray-200 px-3 py-2">
                           <span className="px-2 py-1 rounded font-medium" style={{ background: 'linear-gradient(180deg, #E67E22 0%, #D35400 100%)', color: '#FFF' }}>HIGH</span>
                         </td>
-                        <td className="border border-white/10 px-3 py-2 font-medium">50 ~ 69점</td>
-                        <td className="border border-white/10 px-3 py-2">24시간 내 진료 권장</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">50 ~ 69점</td>
+                        <td className="border border-gray-200 px-3 py-2">24시간 내 진료 권장</td>
                       </tr>
                       <tr style={{ background: 'rgba(0,0,0,0.2)' }}>
-                        <td className="border border-white/10 px-3 py-2">
+                        <td className="border border-gray-200 px-3 py-2">
                           <span className="px-2 py-1 metal-badge-yellow rounded font-medium">MEDIUM</span>
                         </td>
-                        <td className="border border-white/10 px-3 py-2 font-medium">30 ~ 49점</td>
-                        <td className="border border-white/10 px-3 py-2">가까운 시일 내 진료 권장</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">30 ~ 49점</td>
+                        <td className="border border-gray-200 px-3 py-2">가까운 시일 내 진료 권장</td>
                       </tr>
                       <tr>
-                        <td className="border border-white/10 px-3 py-2">
+                        <td className="border border-gray-200 px-3 py-2">
                           <span className="px-2 py-1 metal-badge-green rounded font-medium">LOW</span>
                         </td>
-                        <td className="border border-white/10 px-3 py-2 font-medium">30점 미만</td>
-                        <td className="border border-white/10 px-3 py-2">자가 관리 가능, 필요시 진료</td>
+                        <td className="border border-gray-200 px-3 py-2 font-medium">30점 미만</td>
+                        <td className="border border-gray-200 px-3 py-2">자가 관리 가능, 필요시 진료</td>
                       </tr>
                     </tbody>
                   </table>
@@ -339,7 +339,7 @@ export default function SymptomAnalysis() {
                 </div>
               </div>
 
-              <div className="text-xs text-metal-text-muted pt-2 border-t border-white/10">
+              <div className="text-xs text-metal-text-muted pt-2 border-t border-gray-200">
                 * 이 시스템은 참고용이며, 최종 진단은 반드시 의료 전문가와 상담하세요.
               </div>
             </div>

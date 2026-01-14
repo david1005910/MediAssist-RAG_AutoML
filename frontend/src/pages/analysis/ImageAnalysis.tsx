@@ -194,11 +194,11 @@ export default function ImageAnalysis() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-metal-text-muted mb-2">히트맵</p>
-                    <img src={`data:image/png;base64,${gradcam.heatmap_base64}`} alt="Heatmap" className="rounded-metal border border-white/10" />
+                    <img src={`data:image/png;base64,${gradcam.heatmap_base64}`} alt="Heatmap" className="rounded-metal border border-gray-200" />
                   </div>
                   <div>
                     <p className="text-sm text-metal-text-muted mb-2">오버레이</p>
-                    <img src={`data:image/png;base64,${gradcam.overlay_base64}`} alt="Overlay" className="rounded-metal border border-white/10" />
+                    <img src={`data:image/png;base64,${gradcam.overlay_base64}`} alt="Overlay" className="rounded-metal border border-gray-200" />
                   </div>
                 </div>
               </div>
@@ -224,14 +224,14 @@ export default function ImageAnalysis() {
                         key={index}
                         className="rounded-metal overflow-hidden transition-all"
                         style={{
-                          background: 'linear-gradient(180deg, #2A2F37 0%, #252930 100%)',
+                          background: 'linear-gradient(145deg, #FFFFFF 0%, #F0F4FF 100%)',
                           borderTop: '1px solid rgba(255,255,255,0.08)',
                           borderBottom: '1px solid rgba(0,0,0,0.3)'
                         }}
                       >
                         {/* Header - Always visible */}
                         <div
-                          className="p-4 cursor-pointer hover:bg-white/5 transition-all"
+                          className="p-4 cursor-pointer hover:bg-gray-50 transition-all"
                           onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
                         >
                           <div className="flex justify-between items-center">
@@ -267,7 +267,7 @@ export default function ImageAnalysis() {
 
                         {/* Expanded Detail Section */}
                         {expandedIndex === index && (
-                          <div className="px-4 pb-4 border-t border-white/5">
+                          <div className="px-4 pb-4 border-t border-gray-200">
                             <div className="ml-8 mt-4 space-y-4">
                               {/* Description */}
                               {finding.description && (
@@ -346,7 +346,7 @@ export default function ImageAnalysis() {
           {/* Right Panel - JSON Viewer */}
           <div className="w-80 flex-shrink-0">
             <div className="metal-card sticky top-4">
-              <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <h3 className="font-semibold text-metal-text-light text-sm">JSON 메타데이터</h3>
                 <div className="flex gap-1">
                   <button
@@ -386,7 +386,7 @@ export default function ImageAnalysis() {
                 )}
               </div>
               {selectedJsonData && (
-                <div className="px-4 pb-4 text-xs text-metal-text-muted border-t border-white/5 pt-3">
+                <div className="px-4 pb-4 text-xs text-metal-text-muted border-t border-gray-200 pt-3">
                   <div className="flex justify-between">
                     <span>데이터 크기:</span>
                     <span>{JSON.stringify(selectedJsonData).length.toLocaleString()} bytes</span>
