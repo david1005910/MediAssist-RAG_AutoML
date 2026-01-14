@@ -18,6 +18,8 @@ interface DiseasePrediction {
   probability: number
   confidence: string
   description?: string
+  clinical_significance?: string
+  recommendation?: string
   related_genes: string[]
 }
 
@@ -440,13 +442,40 @@ export default function RNAAnalysis() {
                           </div>
                         </div>
 
+                        {/* Description */}
+                        {pred.description && (
+                          <p className="mt-3 text-sm text-metal-text-mid leading-relaxed">
+                            {pred.description}
+                          </p>
+                        )}
+
+                        {/* Clinical Significance */}
+                        {pred.clinical_significance && (
+                          <div className="mt-2 p-2 bg-yellow-500/5 border-l-2 border-yellow-500/50 rounded-r">
+                            <p className="text-xs text-yellow-400 font-medium">임상적 중요성</p>
+                            <p className="text-sm text-metal-text-mid">{pred.clinical_significance}</p>
+                          </div>
+                        )}
+
+                        {/* Recommendation */}
+                        {pred.recommendation && (
+                          <div className="mt-2 p-2 bg-accent-cyan/5 border-l-2 border-accent-cyan/50 rounded-r">
+                            <p className="text-xs text-accent-cyan font-medium">권고사항</p>
+                            <p className="text-sm text-metal-text-mid">{pred.recommendation}</p>
+                          </div>
+                        )}
+
+                        {/* Related Genes */}
                         {pred.related_genes.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-1">
-                            {pred.related_genes.map((gene, gIdx) => (
-                              <span key={gIdx} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded">
-                                {gene}
-                              </span>
-                            ))}
+                          <div className="mt-3">
+                            <p className="text-xs text-metal-text-muted mb-1">관련 유전자</p>
+                            <div className="flex flex-wrap gap-1">
+                              {pred.related_genes.map((gene, gIdx) => (
+                                <span key={gIdx} className="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-xs rounded">
+                                  {gene}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         )}
                       </div>
