@@ -13,6 +13,9 @@ export default function ImageAnalysis() {
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Detail view state
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+
   // JSON viewer state
   const [selectedJsonData, setSelectedJsonData] = useState<object | null>(null)
   const [jsonCopied, setJsonCopied] = useState(false)
@@ -38,6 +41,7 @@ export default function ImageAnalysis() {
     setResult(null)
     setGradcam(null)
     setError(null)
+    setExpandedIndex(null)
     setPreview(URL.createObjectURL(file))
   }
 
@@ -46,11 +50,16 @@ export default function ImageAnalysis() {
 
     setIsAnalyzing(true)
     setError(null)
+    setExpandedIndex(null)
 
     try {
       const data = await apiClient.analyzeImage(selectedFile)
       setResult(data)
       setGradcam(null)
+      // Auto-expand first finding if available
+      if (data.findings.length > 0) {
+        setExpandedIndex(0)
+      }
     } catch (err) {
       console.error('Analysis error:', err)
       setError('분석 중 오류가 발생했습니다.')
@@ -213,38 +222,102 @@ export default function ImageAnalysis() {
                     {result.findings.map((finding, index) => (
                       <div
                         key={index}
-                        className="p-4 rounded-metal cursor-pointer transition-all hover:shadow-metal"
+                        className="rounded-metal overflow-hidden transition-all"
                         style={{
                           background: 'linear-gradient(180deg, #2A2F37 0%, #252930 100%)',
                           borderTop: '1px solid rgba(255,255,255,0.08)',
                           borderBottom: '1px solid rgba(0,0,0,0.3)'
                         }}
-                        onClick={() => setSelectedJsonData(finding)}
                       >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="font-medium text-metal-text-light">{finding.condition}</h3>
-                            <span className={`text-xs px-2 py-1 rounded-metal-sm ${getConfidenceColor(finding.confidence)}`}>
-                              {finding.confidence === 'high' ? '높음' : finding.confidence === 'medium' ? '중간' : '낮음'}
-                            </span>
-                          </div>
-                          <div className="text-xl font-bold text-accent-cyan">
-                            {(finding.probability * 100).toFixed(1)}%
-                          </div>
-                        </div>
-                        <div className="mt-2 h-2 metal-progress">
-                          <div
-                            className="h-full metal-progress-bar transition-all"
-                            style={{ width: `${finding.probability * 100}%` }}
-                          />
-                        </div>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleGradCAM(finding.condition); }}
-                          disabled={isGeneratingGradCAM}
-                          className="mt-2 text-sm text-accent-cyan hover:text-accent-cyan-light disabled:opacity-50 transition-colors"
+                        {/* Header - Always visible */}
+                        <div
+                          className="p-4 cursor-pointer hover:bg-white/5 transition-all"
+                          onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
                         >
-                          {isGeneratingGradCAM ? 'Grad-CAM 생성 중...' : 'Grad-CAM 보기'}
-                        </button>
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                              <span className="text-metal-text-muted text-lg">
+                                {expandedIndex === index ? '▼' : '▶'}
+                              </span>
+                              <div>
+                                <h3 className="font-medium text-metal-text-light">
+                                  {finding.condition}
+                                  {finding.condition_en && (
+                                    <span className="text-metal-text-muted text-sm ml-2">
+                                      ({finding.condition_en})
+                                    </span>
+                                  )}
+                                </h3>
+                                <span className={`text-xs px-2 py-1 rounded-metal-sm ${getConfidenceColor(finding.confidence)}`}>
+                                  {finding.confidence === 'high' ? '높음' : finding.confidence === 'medium' ? '중간' : '낮음'}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-xl font-bold text-accent-cyan">
+                              {(finding.probability * 100).toFixed(1)}%
+                            </div>
+                          </div>
+                          <div className="mt-2 h-2 metal-progress ml-8">
+                            <div
+                              className="h-full metal-progress-bar transition-all"
+                              style={{ width: `${finding.probability * 100}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Expanded Detail Section */}
+                        {expandedIndex === index && (
+                          <div className="px-4 pb-4 border-t border-white/5">
+                            <div className="ml-8 mt-4 space-y-4">
+                              {/* Description */}
+                              {finding.description && (
+                                <div>
+                                  <h4 className="text-sm font-semibold text-accent-cyan mb-1">상세 설명</h4>
+                                  <p className="text-sm text-metal-text-mid leading-relaxed">
+                                    {finding.description}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* Clinical Significance */}
+                              {finding.clinical_significance && (
+                                <div>
+                                  <h4 className="text-sm font-semibold text-accent-yellow mb-1">임상적 중요성</h4>
+                                  <p className="text-sm text-metal-text-mid leading-relaxed">
+                                    {finding.clinical_significance}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* Recommendation */}
+                              {finding.recommendation && (
+                                <div className="p-3 rounded-metal" style={{ background: 'rgba(79, 195, 247, 0.1)', border: '1px solid rgba(79, 195, 247, 0.2)' }}>
+                                  <h4 className="text-sm font-semibold text-accent-cyan mb-1">권고사항</h4>
+                                  <p className="text-sm text-metal-text-light leading-relaxed">
+                                    {finding.recommendation}
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* Action Buttons */}
+                              <div className="flex gap-2 pt-2">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleGradCAM(finding.condition); }}
+                                  disabled={isGeneratingGradCAM}
+                                  className="px-3 py-1.5 text-sm metal-btn disabled:opacity-50"
+                                >
+                                  {isGeneratingGradCAM ? 'Grad-CAM 생성 중...' : 'Grad-CAM 보기'}
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); setSelectedJsonData(finding); }}
+                                  className="px-3 py-1.5 text-sm metal-btn-secondary"
+                                >
+                                  JSON 보기
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
