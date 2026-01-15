@@ -1,7 +1,26 @@
 """Schemas for RAG medical literature search API."""
 
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Literal
 from pydantic import BaseModel, Field
+
+
+# Available LLM models for RAG generation
+LLMModelType = Literal["gpt-4", "gpt-3.5-turbo", "medgemma", "gemini-pro"]
+
+
+class LLMModelInfo(BaseModel):
+    """Information about an LLM model."""
+    id: str = Field(description="Model identifier")
+    name: str = Field(description="Display name")
+    description: str = Field(description="Model description")
+    provider: str = Field(description="Model provider (OpenAI, Google)")
+    medical_specialized: bool = Field(description="Whether model is medical domain specialized")
+
+
+class AvailableModelsResponse(BaseModel):
+    """Response with available LLM models."""
+    models: List[LLMModelInfo] = Field(description="Available models")
+    default_model: str = Field(default="gpt-4", description="Default model")
 
 
 class DocumentSource(BaseModel):
@@ -64,6 +83,10 @@ class RAGQueryRequest(BaseModel):
         description="Additional context (symptoms, patient info)"
     )
     include_sources: bool = Field(default=True, description="Include source citations")
+    model: Optional[LLMModelType] = Field(
+        default="gpt-4",
+        description="LLM model to use for generation (gpt-4, gpt-3.5-turbo, medgemma, gemini-pro)"
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -74,7 +97,8 @@ class RAGQueryRequest(BaseModel):
                         "symptoms": ["발열", "기침", "호흡곤란"],
                         "patient_age": 65
                     },
-                    "include_sources": True
+                    "include_sources": True,
+                    "model": "medgemma"
                 }
             ]
         }
@@ -113,6 +137,10 @@ class RAGQueryResponse(BaseModel):
     knowledge_graph: Optional[KnowledgeGraphData] = Field(
         default=None,
         description="Related knowledge graph data"
+    )
+    model_used: Optional[LLMModelInfo] = Field(
+        default=None,
+        description="LLM model used for generation"
     )
     disclaimer: str = Field(
         default="이 정보는 의료 전문가의 진단을 대체할 수 없습니다. 반드시 전문의와 상담하세요.",

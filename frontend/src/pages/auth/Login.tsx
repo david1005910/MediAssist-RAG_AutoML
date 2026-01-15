@@ -5,11 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
 import { apiClient } from '@/services/api/client'
+import { supabaseAuth } from '@/services/supabase/client'
 import { useAuthStore } from '@/stores/authStore'
 
 const loginSchema = z.object({
   email: z.string().email('유효한 이메일을 입력하세요'),
-  password: z.string().min(8, '비밀번호는 8자 이상이어야 합니다'),
+  password: z.string().min(6, '비밀번호는 6자 이상이어야 합니다'),
 })
 
 type LoginFormData = z.infer<typeof loginSchema>
@@ -18,6 +19,7 @@ export default function Login() {
   const navigate = useNavigate()
   const login = useAuthStore((state) => state.login)
   const [error, setError] = useState<string | null>(null)
+  const [useSupabase, setUseSupabase] = useState(true)
 
   const {
     register,
@@ -28,7 +30,40 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   })
 
-  const mutation = useMutation({
+  // Supabase login mutation
+  const supabaseMutation = useMutation({
+    mutationFn: async (data: LoginFormData) => {
+      const result = await supabaseAuth.signIn(data.email, data.password)
+      return result
+    },
+    onSuccess: (data) => {
+      if (data.user && data.session) {
+        login(
+          {
+            id: data.user.id,
+            email: data.user.email || '',
+            name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
+            role: data.user.user_metadata?.role || 'doctor',
+          },
+          data.session.access_token
+        )
+        localStorage.setItem('access_token', data.session.access_token)
+        navigate('/dashboard')
+      }
+    },
+    onError: (err: Error) => {
+      if (err.message.includes('Invalid login credentials')) {
+        setError('이메일 또는 비밀번호가 올바르지 않습니다.')
+      } else if (err.message.includes('Email not confirmed')) {
+        setError('이메일 인증이 필요합니다. 이메일을 확인해주세요.')
+      } else {
+        setError(err.message || '로그인 중 오류가 발생했습니다.')
+      }
+    },
+  })
+
+  // Local API login mutation (for demo)
+  const localMutation = useMutation({
     mutationFn: (data: LoginFormData) => apiClient.login(data.email, data.password),
     onSuccess: (data) => {
       login(data.user, data.access_token)
@@ -39,6 +74,8 @@ export default function Login() {
       setError('이메일 또는 비밀번호가 올바르지 않습니다.')
     },
   })
+
+  const mutation = useSupabase ? supabaseMutation : localMutation
 
   const onSubmit = (data: LoginFormData) => {
     setError(null)
@@ -52,36 +89,58 @@ export default function Login() {
 
   const loginWithDemo = () => {
     setError(null)
-    mutation.mutate({ email: 'demo@mediassist.ai', password: 'demo1234' })
+    setUseSupabase(false)
+    localMutation.mutate({ email: 'demo@mediassist.ai', password: 'demo1234' })
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="max-w-md w-full space-y-8 p-8 metal-card">
         <div>
-          <h2 className="text-center text-3xl font-bold text-metal-gradient">
+          <h2 className="text-center text-3xl font-bold text-gray-800">
             MediAssist AI
           </h2>
-          <p className="mt-2 text-center text-sm text-metal-text-mid">
+          <p className="mt-2 text-center text-sm text-gray-600">
             의료 진단 보조 시스템
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        {/* Auth Method Toggle */}
+        <div className="flex items-center justify-center gap-4 p-3 bg-gray-100 rounded-xl">
+          <button
+            type="button"
+            onClick={() => setUseSupabase(true)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              useSupabase
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'bg-transparent text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Supabase 인증
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseSupabase(false)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              !useSupabase
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'bg-transparent text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            로컬 인증
+          </button>
+        </div>
+
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {error && (
-            <div className="p-3 rounded-metal-sm text-sm"
-              style={{
-                background: 'linear-gradient(180deg, #5C2A2A 0%, #4A2222 100%)',
-                borderTop: '1px solid rgba(255,255,255,0.1)',
-                color: '#F0A0A0'
-              }}>
+            <div className="p-3 rounded-xl text-sm bg-red-50 border border-red-200 text-red-600">
               {error}
             </div>
           )}
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-metal-text-mid">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 이메일
               </label>
               <input
@@ -91,12 +150,12 @@ export default function Login() {
                 placeholder="your@email.com"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-400">{errors.email.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-metal-text-mid">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 비밀번호
               </label>
               <input
@@ -106,7 +165,7 @@ export default function Login() {
                 placeholder="••••••••"
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-400">{errors.password.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
               )}
             </div>
           </div>
@@ -121,30 +180,25 @@ export default function Login() {
         </form>
 
         {/* Demo credentials */}
-        <div className="mt-4 p-4 rounded-metal-sm"
-          style={{
-            background: 'linear-gradient(180deg, #2A3A4A 0%, #223344 100%)',
-            borderTop: '1px solid rgba(79, 195, 247, 0.2)',
-            borderBottom: '1px solid rgba(0,0,0,0.3)'
-          }}>
-          <p className="text-sm text-accent-cyan font-medium mb-2">데모 계정</p>
-          <p className="text-xs text-metal-text-muted">이메일: demo@mediassist.ai</p>
-          <p className="text-xs text-metal-text-muted mb-3">비밀번호: demo1234</p>
+        <div className="mt-4 p-4 rounded-xl bg-indigo-50 border border-indigo-100">
+          <p className="text-sm text-indigo-700 font-medium mb-2">데모 계정 (로컬 인증)</p>
+          <p className="text-xs text-indigo-600">이메일: demo@mediassist.ai</p>
+          <p className="text-xs text-indigo-600 mb-3">비밀번호: demo1234</p>
           <button
             type="button"
             onClick={loginWithDemo}
-            disabled={mutation.isPending}
+            disabled={localMutation.isPending}
             className="w-full text-sm py-2 px-4 metal-btn-secondary disabled:opacity-50"
           >
-            {mutation.isPending ? '로그인 중...' : '데모 계정으로 로그인'}
+            {localMutation.isPending ? '로그인 중...' : '데모 계정으로 로그인'}
           </button>
         </div>
 
         {/* Register link */}
         <div className="text-center">
-          <p className="text-sm text-metal-text-muted">
+          <p className="text-sm text-gray-600">
             계정이 없으신가요?{' '}
-            <Link to="/register" className="text-accent-cyan hover:text-accent-cyan-light font-medium transition-colors">
+            <Link to="/register" className="text-indigo-600 hover:text-indigo-800 font-medium transition-colors">
               회원가입
             </Link>
           </p>

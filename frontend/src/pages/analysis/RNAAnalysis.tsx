@@ -66,7 +66,8 @@ export default function RNAAnalysis() {
   const [sequence, setSequence] = useState('')
   const [rnaType, setRnaType] = useState('auto')
   const [result, setResult] = useState<RNAAnalysisResponse | null>(null)
-  const [showSampleData, setShowSampleData] = useState(false)
+  const [showSampleData, setShowSampleData] = useState(true)
+  const [sampleFilter, setSampleFilter] = useState('')
 
   // Fetch sample data
   const { data: sampleData } = useQuery<SampleDataResponse>({
@@ -251,43 +252,93 @@ export default function RNAAnalysis() {
             </div>
 
             {/* Sample Data */}
-            <div className="metal-card p-6">
+            <div className="clay-card p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-metal-text-light">샘플 데이터</h2>
+                <h2 className="text-lg font-semibold text-gray-800">샘플 데이터</h2>
                 <button
-                  onClick={() => setShowSampleData(!showSampleData)}
-                  className="text-sm text-accent-cyan hover:text-accent-cyan/80"
+                  onClick={() => {
+                    setShowSampleData(!showSampleData)
+                    if (!showSampleData) setSampleFilter('')
+                  }}
+                  className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
                 >
-                  {showSampleData ? '닫기' : '샘플 보기'}
+                  {showSampleData ? '닫기 ▲' : '샘플 보기 ▼'}
                 </button>
               </div>
 
               {showSampleData && sampleData && (
-                <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {sampleData.sequences.map((sample) => (
-                    <button
-                      key={sample.id}
-                      onClick={() => loadSampleSequence(sample)}
-                      className="w-full text-left p-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors shadow-sm"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-metal-text-light">{sample.name}</span>
-                        <span className="px-2 py-0.5 bg-accent-cyan/20 text-accent-cyan text-xs rounded">
-                          {sample.rna_type}
-                        </span>
-                      </div>
-                      <p className="text-xs text-metal-text-muted mt-1">{sample.description}</p>
-                      <p className="text-xs text-metal-text-muted mt-1 font-mono truncate">
-                        {sample.sequence.substring(0, 40)}...
-                      </p>
-                    </button>
-                  ))}
-                </div>
+                <>
+                  {/* RNA Type Filter */}
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {['전체', 'mRNA', 'siRNA', 'circRNA', 'lncRNA'].map((type) => {
+                      const filterValue = type === '전체' ? '' : type
+                      const isActive = sampleFilter === filterValue
+                      return (
+                        <button
+                          key={type}
+                          onClick={() => setSampleFilter(filterValue)}
+                          className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                            isActive
+                              ? 'bg-indigo-600 text-white'
+                              : 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200'
+                          }`}
+                        >
+                          {type}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {/* Sample List with Scrollbar */}
+                  <div
+                    className="space-y-2 max-h-64 overflow-y-auto pr-2"
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: '#a5b4fc #f3f4f6' }}
+                  >
+                    {sampleData.sequences
+                      .filter((sample) => !sampleFilter || sample.rna_type === sampleFilter)
+                      .map((sample) => (
+                        <button
+                          key={sample.id}
+                          onClick={() => loadSampleSequence(sample)}
+                          className="w-full text-left p-3 bg-white/80 hover:bg-white border border-gray-200 rounded-xl transition-all shadow-sm hover:shadow-md"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-gray-800">{sample.name}</span>
+                            <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                              sample.rna_type === 'mRNA' ? 'bg-blue-100 text-blue-700' :
+                              sample.rna_type === 'siRNA' ? 'bg-green-100 text-green-700' :
+                              sample.rna_type === 'circRNA' ? 'bg-purple-100 text-purple-700' :
+                              'bg-orange-100 text-orange-700'
+                            }`}>
+                              {sample.rna_type}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-600 mt-1">{sample.description}</p>
+                          <p className="text-xs text-gray-400 mt-1 font-mono truncate">
+                            {sample.sequence.substring(0, 40)}...
+                          </p>
+                          {sample.expected_diseases && sample.expected_diseases.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {sample.expected_diseases.slice(0, 2).map((disease, idx) => (
+                                <span key={idx} className="px-1.5 py-0.5 text-xs bg-red-50 text-red-600 rounded">
+                                  {disease}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                  </div>
+
+                  <p className="text-xs text-gray-500 mt-3 text-center">
+                    총 {sampleData.sequences.filter((s) => !sampleFilter || s.rna_type === sampleFilter).length}개 샘플 • 클릭하여 로드
+                  </p>
+                </>
               )}
 
               {!showSampleData && (
-                <p className="text-sm text-metal-text-muted">
-                  샘플 RNA 서열을 로드하여 테스트할 수 있습니다.
+                <p className="text-sm text-gray-600">
+                  샘플 RNA 서열을 로드하여 테스트할 수 있습니다. (mRNA, siRNA, circRNA, lncRNA)
                 </p>
               )}
             </div>

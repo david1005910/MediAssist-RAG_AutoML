@@ -29,6 +29,9 @@ export default function LiteratureSearch() {
   const [academicResults, setAcademicResults] = useState<AcademicSearchResponse | null>(null)
   const [maxResultsPerSource, setMaxResultsPerSource] = useState(10)
 
+  // LLM model selection state
+  const [selectedModel, setSelectedModel] = useState<string>('gpt-4')
+
   // JSON viewer state
   const [selectedJsonData, setSelectedJsonData] = useState<object | null>(null)
   const [jsonCopied, setJsonCopied] = useState(false)
@@ -43,6 +46,12 @@ export default function LiteratureSearch() {
   const { data: sourcesData } = useQuery({
     queryKey: ['academic-sources'],
     queryFn: () => apiClient.getAcademicSources(),
+  })
+
+  // Get available LLM models
+  const { data: modelsData } = useQuery({
+    queryKey: ['rag-models'],
+    queryFn: () => apiClient.getRAGModels(),
   })
 
   // Initialize selected sources when data loads
@@ -65,6 +74,7 @@ export default function LiteratureSearch() {
     mutationFn: (question: string) => apiClient.queryRAG({
       question,
       include_sources: true,
+      model: selectedModel,
     }),
     onSuccess: (data) => {
       setRagResult(data)
@@ -404,6 +414,72 @@ export default function LiteratureSearch() {
                   <p className="text-sm text-metal-text-muted mb-4">
                     의학 문헌 + 지식 그래프를 기반으로 질문에 답변합니다.
                   </p>
+
+                  {/* LLM Model Selection */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-metal-text-mid mb-2">
+                      LLM 모델 선택
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {modelsData?.models ? (
+                        modelsData.models.map((model: { id: string; name: string; description: string; medical_specialized: boolean }) => (
+                          <button
+                            key={model.id}
+                            type="button"
+                            onClick={() => setSelectedModel(model.id)}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                              selectedModel === model.id
+                                ? model.medical_specialized
+                                  ? 'bg-green-600 text-white shadow-md'
+                                  : 'bg-indigo-600 text-white shadow-md'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1">
+                              {model.medical_specialized && <span>🏥</span>}
+                              {model.name}
+                            </span>
+                            <span className="block text-xs opacity-80 mt-0.5">
+                              {model.description.split(' - ')[1] || model.description}
+                            </span>
+                          </button>
+                        ))
+                      ) : (
+                        // Default models if API not available
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedModel('gpt-4')}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                              selectedModel === 'gpt-4'
+                                ? 'bg-indigo-600 text-white shadow-md'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                          >
+                            GPT-4
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedModel('medgemma')}
+                            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                              selectedModel === 'medgemma'
+                                ? 'bg-green-600 text-white shadow-md'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1">
+                              🏥 MedGemma
+                            </span>
+                            <span className="block text-xs opacity-80">의료 특화</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    <p className="text-xs text-metal-text-muted mt-2">
+                      🏥 표시는 의료 도메인 특화 모델입니다. MedGemma는 의료 문헌 이해에 최적화되어 있습니다.
+                    </p>
+                  </div>
+
                   <textarea
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
@@ -427,9 +503,21 @@ export default function LiteratureSearch() {
                       <div className="metal-card p-6">
                         <div className="flex justify-between items-center mb-4">
                           <h2 className="text-lg font-semibold text-metal-text-light">답변</h2>
-                          <span className={`text-xs px-2 py-1 rounded-metal-sm ${getConfidenceColor(ragResult.confidence)}`}>
-                            신뢰도: {ragResult.confidence === 'high' ? '높음' : ragResult.confidence === 'medium' ? '중간' : '낮음'}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            {ragResult.model_used && (
+                              <span className={`text-xs px-2 py-1 rounded-metal-sm ${
+                                ragResult.model_used.medical_specialized
+                                  ? 'bg-green-600/30 text-green-400'
+                                  : 'bg-indigo-600/30 text-indigo-400'
+                              }`}>
+                                {ragResult.model_used.medical_specialized && '🏥 '}
+                                {ragResult.model_used.name}
+                              </span>
+                            )}
+                            <span className={`text-xs px-2 py-1 rounded-metal-sm ${getConfidenceColor(ragResult.confidence)}`}>
+                              신뢰도: {ragResult.confidence === 'high' ? '높음' : ragResult.confidence === 'medium' ? '중간' : '낮음'}
+                            </span>
+                          </div>
                         </div>
                         <div className="prose prose-sm max-w-none">
                           <pre className="whitespace-pre-wrap font-sans text-metal-text-mid p-4 rounded-metal text-sm max-h-96 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.2)' }}>

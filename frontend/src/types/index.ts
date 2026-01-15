@@ -122,6 +122,22 @@ export interface LiteratureSearchResponse {
   query: string
 }
 
+// LLM Model types for RAG
+export type LLMModelType = 'gpt-4' | 'gpt-3.5-turbo' | 'medgemma' | 'gemini-pro'
+
+export interface LLMModelInfo {
+  id: string
+  name: string
+  description: string
+  provider: string
+  medical_specialized: boolean
+}
+
+export interface AvailableModelsResponse {
+  models: LLMModelInfo[]
+  default_model: string
+}
+
 export interface RAGQueryRequest {
   question: string
   context?: {
@@ -129,6 +145,7 @@ export interface RAGQueryRequest {
     patient_age?: number
   }
   include_sources?: boolean
+  model?: LLMModelType
 }
 
 export interface KnowledgeGraphNode {
@@ -157,6 +174,7 @@ export interface RAGQueryResponse {
   context_used?: string
   confidence: 'high' | 'medium' | 'low'
   knowledge_graph?: KnowledgeGraphData
+  model_used?: LLMModelInfo
   disclaimer: string
 }
 

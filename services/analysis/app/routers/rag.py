@@ -51,6 +51,8 @@ from app.schemas.rag import (
     AcademicSource,
     UnifiedSearchRequest,
     UnifiedSearchResponse,
+    LLMModelInfo,
+    AvailableModelsResponse,
 )
 
 # Add rag module to path
@@ -59,6 +61,14 @@ if not RAG_PATH.exists():
     RAG_PATH = Path(__file__).parents[4] / "rag"
 if str(RAG_PATH.parent) not in sys.path:
     sys.path.insert(0, str(RAG_PATH.parent))
+
+# Import AnswerGenerator for LLM-based generation
+try:
+    from rag.generation.generator import AnswerGenerator
+    ANSWER_GENERATOR_AVAILABLE = True
+except ImportError:
+    ANSWER_GENERATOR_AVAILABLE = False
+    print("[RAG] AnswerGenerator not available, using extractive mode only")
 
 router = APIRouter(prefix="/api/v1/rag", tags=["RAG Literature Search"])
 
@@ -1392,6 +1402,51 @@ def hybrid_search(
     return results[:top_k]
 
 
+# ============================================================================
+# LLM Model Selection Endpoints
+# ============================================================================
+
+@router.get("/models", response_model=AvailableModelsResponse)
+async def get_available_models():
+    """
+    Get list of available LLM models for RAG generation.
+
+    Returns information about each model including:
+    - gpt-4: OpenAI GPT-4 (general purpose)
+    - gpt-3.5-turbo: OpenAI GPT-3.5 (faster, more economical)
+    - medgemma: Google MedGemma (medical domain specialized)
+    - gemini-pro: Google Gemini Pro (multimodal)
+    """
+    if ANSWER_GENERATOR_AVAILABLE:
+        models = AnswerGenerator.get_available_models()
+        return AvailableModelsResponse(
+            models=[LLMModelInfo(**m) for m in models],
+            default_model="gpt-4"
+        )
+    else:
+        # Return default models info if AnswerGenerator not available
+        default_models = [
+            LLMModelInfo(
+                id="gpt-4",
+                name="GPT-4",
+                description="OpenAI GPT-4 - 범용 고성능 LLM",
+                provider="OpenAI",
+                medical_specialized=False
+            ),
+            LLMModelInfo(
+                id="medgemma",
+                name="MedGemma",
+                description="Google MedGemma - 의료 도메인 특화 모델",
+                provider="Google",
+                medical_specialized=True
+            ),
+        ]
+        return AvailableModelsResponse(
+            models=default_models,
+            default_model="gpt-4"
+        )
+
+
 @router.post("/search", response_model=LiteratureSearchResponse)
 async def search_literature(request: LiteratureSearchRequest):
     """
@@ -1492,17 +1547,62 @@ async def query_rag(request: RAGQueryRequest):
 
         context_text = "\n\n".join(context_parts)
 
-        # Generate answer with graph context
+        # Generate answer with selected model
+        model_used_info = None
         if not context_parts:
             answer = "관련 문헌을 찾을 수 없습니다."
             confidence = "low"
         else:
-            answer = _generate_extractive_answer(
-                request.question,
-                context_parts,
-                sources,
-                graph_context=graph_data.get("context", "")
-            )
+            # Use LLM-based generation if model is specified and AnswerGenerator is available
+            selected_model = request.model or "gpt-4"
+
+            if ANSWER_GENERATOR_AVAILABLE and selected_model in ["gpt-4", "gpt-3.5-turbo", "medgemma", "gemini-pro"]:
+                try:
+                    # Create generator with selected model
+                    generator = AnswerGenerator(model=selected_model)
+
+                    # Prepare documents for generation
+                    docs_for_generation = [
+                        {
+                            "content": result["content"],
+                            "metadata": result["metadata"]
+                        }
+                        for result in results
+                    ]
+
+                    # Generate answer using LLM
+                    gen_result = generator.generate(
+                        question=request.question,
+                        documents=docs_for_generation
+                    )
+
+                    answer = gen_result.get("answer", "")
+                    model_used_info = gen_result.get("model_used")
+
+                    # Add knowledge graph context to answer if available
+                    if graph_data.get("context"):
+                        answer += f"\n\n🕸️ **지식 그래프 정보:**\n{graph_data['context']}"
+
+                    # Add medical disclaimer
+                    answer += "\n\n⚠️ 이 정보는 참고용이며 최종 진단은 의사가 결정해야 합니다."
+
+                except Exception as e:
+                    print(f"[RAG] LLM generation failed: {e}, falling back to extractive mode")
+                    answer = _generate_extractive_answer(
+                        request.question,
+                        context_parts,
+                        sources,
+                        graph_context=graph_data.get("context", "")
+                    )
+            else:
+                # Fall back to extractive answer generation
+                answer = _generate_extractive_answer(
+                    request.question,
+                    context_parts,
+                    sources,
+                    graph_context=graph_data.get("context", "")
+                )
+
             confidence = "high" if len(sources) >= 3 and sources[0].relevance > 0.7 else "medium"
 
         # Build knowledge graph response
@@ -1528,12 +1628,24 @@ async def query_rag(request: RAGQueryRequest):
                 context=graph_data.get("context", "")
             )
 
+        # Build model_used response
+        model_used_response = None
+        if model_used_info:
+            model_used_response = LLMModelInfo(
+                id=model_used_info.get("id", "unknown"),
+                name=model_used_info.get("name", "Unknown"),
+                description=model_used_info.get("description", ""),
+                provider=model_used_info.get("provider", "Unknown"),
+                medical_specialized=model_used_info.get("medical_specialized", False)
+            )
+
         return RAGQueryResponse(
             answer=answer,
             sources=sources if request.include_sources else [],
             context_used=context_text if request.include_sources else None,
             confidence=confidence,
-            knowledge_graph=kg_response
+            knowledge_graph=kg_response,
+            model_used=model_used_response
         )
 
     except Exception as e:

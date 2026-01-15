@@ -150,6 +150,11 @@ class ApiClient {
     return response.data
   }
 
+  async getRAGModels() {
+    const response = await this.client.get('/api/v1/rag/models')
+    return response.data
+  }
+
   async loadSampleData() {
     const response = await this.client.post('/api/v1/rag/load-sample-data')
     return response.data
