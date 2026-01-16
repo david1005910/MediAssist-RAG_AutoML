@@ -15,6 +15,18 @@ services:
       timeout: 5s
       retries: 5
 
+  mongodb:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:7-alpine
     ports:
@@ -80,6 +92,8 @@ services:
     build: ./services/analysis
     environment:
       - DATABASE_URL=postgresql+asyncpg://mediassist:password@postgres:5432/mediassist
+      - MONGODB_URI=mongodb://mongodb:27017
+      - MONGODB_DB=mediassist
       - REDIS_URL=redis://redis:6379/0
       - CHROMA_HOST=chromadb
       - CHROMA_PORT=8000
@@ -89,6 +103,8 @@ services:
       - "8003:8000"
     depends_on:
       postgres:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -128,6 +144,7 @@ services:
 
 volumes:
   postgres_data:
+  mongodb_data:
   redis_data:
   chroma_data:
   minio_data:

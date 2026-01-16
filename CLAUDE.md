@@ -9,103 +9,117 @@ MediAssist AI is a medical diagnosis support system combining ML-based symptom a
 ## Tech Stack
 
 **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0 (async), Celery + Redis
-**Frontend:** React 18, TypeScript, TailwindCSS, Zustand, TanStack Query
-**ML/AI:** PyTorch, XGBoost, BioBERT (dmis-lab/biobert-v1.1), LangChain, ChromaDB
-**Database:** PostgreSQL 15+, Redis 7.x, ChromaDB, MinIO
+**Frontend:** React 18, TypeScript, TailwindCSS, Zustand, TanStack Query, Three.js
+**ML/AI:** PyTorch, scikit-learn, BioBERT (dmis-lab/biobert-v1.1), DenseNet121, Optuna (AutoML), LangChain
+**Database:** PostgreSQL 15+, MongoDB 7, Redis 7.x, ChromaDB (Vector DB)
 **Infrastructure:** Docker, Kubernetes, GitHub Actions
-
-## Project Structure
-
-```
-mediassist-ai/
-├── services/           # Microservices (auth, patient, analysis, report)
-│   └── {service}/
-│       ├── app/        # FastAPI application
-│       │   ├── routers/
-│       │   ├── schemas/
-│       │   ├── crud/
-│       │   └── services/
-│       ├── tests/
-│       └── Dockerfile
-├── models/             # ML models
-│   ├── symptom_classifier/   # BioBERT NER + XGBoost/RF ensemble
-│   ├── image_analyzer/       # DenseNet121 for chest X-ray
-│   └── risk_predictor/       # Neural network for risk scoring
-├── rag/                # RAG system
-│   ├── ingestion/      # Document collection (PubMed, guidelines)
-│   ├── embedding/      # BioBERT embedding pipeline
-│   ├── retrieval/      # Hybrid search (dense + BM25)
-│   ├── reranking/      # Cross-encoder reranker
-│   └── generation/     # LLM integration (GPT-4)
-├── frontend/           # React application
-├── common/             # Shared code (database, models, schemas)
-├── k8s/                # Kubernetes manifests
-└── docker-compose.yml
-```
 
 ## Commands
 
 ```bash
 # Development environment
-docker-compose up -d              # Start all services
+docker-compose up -d              # Start all services (postgres, mongodb, redis, chromadb, minio)
 docker-compose logs -f            # View logs
 
-# Backend (per service)
-cd services/analysis
-pip install -r requirements.txt
-uvicorn app.main:app --reload     # Run service
-pytest tests/                     # Run tests
-pytest tests/test_file.py -k test_name  # Run single test
+# Install dependencies
+pip install -r requirements.txt   # Python dependencies
+cd frontend && npm install        # Frontend dependencies
 
-# Frontend
-cd frontend
-npm install
-npm run dev                       # Development server
-npm run build                     # Production build
-npm run test                      # Run tests
+# Run services
+cd services/analysis && uvicorn app.main:app --reload --port 8003  # Main analysis service
+cd frontend && npm run dev        # Frontend (port 5173)
+
+# Run tests
+PYTHONPATH=$PWD pytest -v                           # All tests (74 tests)
+pytest tests/test_symptom_classifier.py -v          # Specific module
+pytest tests/test_file.py -k test_name              # Single test
 
 # Code quality
 ruff check .                      # Linting
-black .                           # Formatting
+black .                           # Formatting (line-length: 100)
 mypy --strict .                   # Type checking
-bandit -r .                       # Security scan
+
+# Make commands
+make install                      # Install all dependencies
+make test                         # Run tests with coverage
+make lint                         # Run ruff + mypy
+make format                       # Run black + ruff fix
 ```
 
 ## Architecture
 
-### Service Communication
-- **API Gateway (Kong/Nginx):** Rate limiting (100 req/min per user), JWT validation, routing
-- **Services communicate via REST API and Redis message queue**
-- **Background tasks processed via Celery workers**
+### Service Ports
+- Analysis Service: 8003 (main backend)
+- Auth Service: 8001
+- Patient Service: 8002
+- Report Service: 8004
+- Frontend: 5173 (dev) / 3001 (docker)
+- PostgreSQL: 5433
+- MongoDB: 27017
+- Redis: 6380
+- ChromaDB: 8005
 
-### ML Pipeline Flow
-1. **Symptom Analysis:** Text → BioBERT NER → Feature extraction → XGBoost/RF ensemble → Disease predictions
-2. **Image Analysis:** X-ray → DenseNet121 → Multi-label classification + Grad-CAM heatmap
-3. **Risk Assessment:** Combined features → Neural network → Risk score
+### Analysis Service Routers (`services/analysis/app/routers/`)
+- `symptom.py` - Symptom analysis and disease prediction
+- `image.py` - Chest X-ray analysis with DenseNet121 + Grad-CAM
+- `rna.py` - RNA sequence disease prediction
+- `automl.py` - Optuna-based hyperparameter optimization
+- `rag.py` - Medical literature search and Q&A
+- `graph.py` - Neo4j knowledge graph queries
+- `auth.py` - MongoDB-based authentication
 
-### RAG Pipeline Flow
-1. **Ingestion:** PubMed/Guidelines → PDF/HTML parser → Text chunking (500 chars, 50 overlap)
-2. **Retrieval:** Query → BioBERT embedding → ChromaDB (HNSW) + BM25 → Reciprocal Rank Fusion
-3. **Reranking:** Cross-encoder (ms-marco-MiniLM-L-6-v2) → Top 5 documents
-4. **Generation:** Context + Prompt → GPT-4 → Answer with citations
+### ML Models (`models/`)
 
-## Code Standards
+**SymptomClassifier** (`symptom_classifier/classifier.py`)
+- BioBERT NER for symptom extraction + RandomForest ensemble
+- Input: symptoms list + patient info → Output: disease predictions with ICD codes
 
-- **Type hints required** (mypy strict mode)
-- **PEP 8 + Black formatter**
-- **Test coverage ≥ 80%**
-- **All public APIs require docstrings**
-- **Commit messages:** Conventional Commits format
-- **Branching:** Git Flow
+**ImageAnalyzer** (`image_analyzer/model.py`)
+- DenseNet121 for chest X-ray analysis + Grad-CAM heatmap visualization
 
-## ML Model Performance Targets
+**RNAPredictor** (`rna_predictor/model.py`)
+- BERT-style transformer with CNN N-gram encoder
+- Multi-task: RNA type classification + disease prediction + risk scoring
 
-| Model | Metric | Target |
-|-------|--------|--------|
-| Symptom Classifier | Accuracy | ≥ 85% |
-| Symptom Classifier | F1-macro | ≥ 0.80 |
-| Image Analyzer | AUC-ROC | ≥ 0.90 |
-| RAG System | Relevance | ≥ 0.70 |
+**AutoML** (`automl/`)
+- Optuna optimizer with TPE/CMA-ES samplers, Hyperband pruning
+- Ensemble generation (voting, hybrid)
+
+### RAG System (`rag/`)
+
+**MedicalRAG** (`medical_rag.py`)
+- Embedding: BioBERT → ChromaDB (HNSW)
+- Retrieval: Hybrid search (Dense + BM25) with cross-encoder reranking
+- Generation: GPT-4 with medical prompts and citation formatting
+
+### Authentication
+- MongoDB-based user storage with SHA-256 password hashing
+- Demo account: `demo@mediassist.ai` / `demo1234` (fallback when MongoDB unavailable)
+- JWT tokens for session management
+
+## Key API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/symptom/analyze` | POST | Analyze symptoms and predict diseases |
+| `/api/v1/symptom/ner` | POST | Extract symptoms from natural language |
+| `/api/v1/image/analyze` | POST | Analyze chest X-ray images |
+| `/api/v1/rna/analyze` | POST | Analyze RNA sequences for disease prediction |
+| `/api/v1/automl/experiments` | POST | Create AutoML experiment |
+| `/api/v1/rag/search` | POST | Search medical literature |
+| `/api/v1/rag/qa` | POST | RAG-based question answering |
+| `/api/v1/auth/login` | POST | User login (MongoDB/demo) |
+| `/api/v1/auth/register` | POST | User registration (MongoDB) |
+
+## Model Performance Targets
+
+| Model | Metric | Target | Achieved |
+|-------|--------|--------|----------|
+| Symptom Classifier | Accuracy | ≥ 85% | 87.5% |
+| RNA Predictor | Type Accuracy | ≥ 90% | 92% |
+| RNA Predictor | Disease F1 | ≥ 0.75 | 0.84 |
+| Image Analyzer | AUC-ROC | ≥ 0.90 | - |
+| RAG System | Relevance | ≥ 0.70 | - |
 
 ## Medical Safety Requirements
 
@@ -116,10 +130,9 @@ All outputs must include disclaimer: "이 정보는 참고용이며 최종 진�
 - Red flag symptoms must trigger immediate warnings
 - Explicitly state uncertainty when confidence is low
 
-## Security
+## Code Standards
 
-- **Authentication:** JWT (RS256), OAuth 2.0
-- **Authorization:** RBAC (admin, doctor, nurse, researcher roles)
-- **Encryption:** AES-256-GCM at rest, TLS 1.3 in transit
-- **Patient data must be anonymized; PII fields encrypted**
-- **All access logged with audit trail (7-year retention)**
+- Type hints required (mypy strict mode)
+- Line length: 100 (Black + Ruff)
+- Test coverage ≥ 80%
+- Commit messages: Conventional Commits format

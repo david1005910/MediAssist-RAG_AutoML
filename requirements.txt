@@ -18,6 +18,10 @@ python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
 python-multipart>=0.0.6
 
+# MongoDB
+pymongo>=4.6.0
+dnspython>=2.4.0  # Required for mongodb+srv:// (Atlas) connections
+
 # ML
 torch>=2.1.0
 torchvision>=0.16.0
