@@ -3,7 +3,7 @@
 from typing import List, Dict, Optional, Literal
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
+from langchain_core.prompts import PromptTemplate
 import os
 
 
@@ -27,12 +27,20 @@ class MedGemmaClient:
         if self.api_key:
             try:
                 # Use Gemini with medical-focused configuration
-                self.llm = ChatGoogleGenerativeAI(
-                    model="gemini-1.5-flash",
-                    google_api_key=self.api_key,
-                    temperature=0.3,
-                    convert_system_message_to_human=True,
-                )
+                # Try multiple models in case of quota issues
+                models_to_try = ["gemini-2.0-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"]
+                for model_name in models_to_try:
+                    try:
+                        self.llm = ChatGoogleGenerativeAI(
+                            model=model_name,
+                            google_api_key=self.api_key,
+                            temperature=0.3,
+                        )
+                        self.model_name = model_name
+                        print(f"MedGemma initialized with {model_name}")
+                        break
+                    except Exception:
+                        continue
             except Exception as e:
                 print(f"MedGemma/Gemini initialization failed: {e}")
                 self.llm = None
