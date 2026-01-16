@@ -19,7 +19,7 @@ export default function Login() {
   const navigate = useNavigate()
   const login = useAuthStore((state) => state.login)
   const [error, setError] = useState<string | null>(null)
-  const [useSupabase, setUseSupabase] = useState(true)
+  const [useSupabase, setUseSupabase] = useState(false) // Default to MongoDB auth
 
   const {
     register,
@@ -127,7 +127,7 @@ export default function Login() {
                 : 'bg-transparent text-gray-600 hover:bg-gray-200'
             }`}
           >
-            로컬 인증
+            MongoDB 인증
           </button>
         </div>
 

@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
+import { apiClient } from '@/services/api/client'
 import { supabaseAuth } from '@/services/supabase/client'
+import { useAuthStore } from '@/stores/authStore'
 
 const registerSchema = z.object({
   name: z.string().min(2, '이름은 2자 이상이어야 합니다'),
@@ -28,8 +30,10 @@ const roleLabels = {
 
 export default function Register() {
   const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [useSupabase, setUseSupabase] = useState(false) // Default to MongoDB auth
 
   const {
     register,
@@ -42,7 +46,8 @@ export default function Register() {
     },
   })
 
-  const mutation = useMutation({
+  // Supabase registration mutation
+  const supabaseMutation = useMutation({
     mutationFn: async (data: RegisterFormData) => {
       const result = await supabaseAuth.signUp(data.email, data.password, {
         name: data.name,
@@ -74,6 +79,26 @@ export default function Register() {
       }
     },
   })
+
+  // MongoDB registration mutation
+  const mongoMutation = useMutation({
+    mutationFn: (data: RegisterFormData) =>
+      apiClient.register({ email: data.email, password: data.password, name: data.name, role: data.role }),
+    onSuccess: (data) => {
+      login(data.user, data.access_token)
+      localStorage.setItem('access_token', data.access_token)
+      navigate('/dashboard')
+    },
+    onError: (err: Error) => {
+      if (err.message.includes('이미 등록된')) {
+        setError('이미 등록된 이메일입니다.')
+      } else {
+        setError(err.message || '회원가입에 실패했습니다.')
+      }
+    },
+  })
+
+  const mutation = useSupabase ? supabaseMutation : mongoMutation
 
   const onSubmit = (data: RegisterFormData) => {
     setError(null)
@@ -115,7 +140,33 @@ export default function Register() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        {/* Auth Method Toggle */}
+        <div className="flex items-center justify-center gap-4 p-3 bg-gray-100 rounded-xl">
+          <button
+            type="button"
+            onClick={() => setUseSupabase(true)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              useSupabase
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'bg-transparent text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            Supabase 인증
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseSupabase(false)}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              !useSupabase
+                ? 'bg-indigo-600 text-white shadow-md'
+                : 'bg-transparent text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            MongoDB 인증
+          </button>
+        </div>
+
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           {error && (
             <div className="p-3 rounded-xl text-sm bg-red-50 border border-red-200 text-red-600">
               {error}

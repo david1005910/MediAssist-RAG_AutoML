@@ -1,11 +1,14 @@
-"""Authentication router for login and registration with Supabase."""
+"""Authentication router for login and registration with MongoDB."""
 import hashlib
 import secrets
+import os
 from datetime import datetime
 from typing import Optional
+from bson import ObjectId
 
 from fastapi import APIRouter, HTTPException, status
-from supabase import create_client, Client
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, DuplicateKeyError
 
 from ..schemas.auth import (
     UserRegisterRequest,
@@ -14,29 +17,42 @@ from ..schemas.auth import (
     AuthResponse,
     MessageResponse,
 )
-from ..config import settings
 
 router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
 
-# Supabase client
-_supabase_client: Optional[Client] = None
+# MongoDB configuration
+MONGODB_URI = os.environ.get("MONGODB_URI", "mongodb://localhost:27017")
+MONGODB_DB = os.environ.get("MONGODB_DB", "mediassist")
+
+# MongoDB client
+_mongo_client: Optional[MongoClient] = None
+_mongo_db = None
 
 
-def get_supabase() -> Optional[Client]:
-    """Get or initialize Supabase client."""
-    global _supabase_client
-    if _supabase_client is None:
-        if settings.SUPABASE_URL and settings.SUPABASE_KEY:
-            try:
-                _supabase_client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
-                print(f"[Supabase] Connected to {settings.SUPABASE_URL}")
-            except Exception as e:
-                print(f"[Supabase] Connection failed: {e}")
-                return None
-    return _supabase_client
+def get_mongodb():
+    """Get or initialize MongoDB connection."""
+    global _mongo_client, _mongo_db
+    if _mongo_client is None:
+        try:
+            _mongo_client = MongoClient(MONGODB_URI, serverSelectionTimeoutMS=5000)
+            # Test connection
+            _mongo_client.admin.command('ping')
+            _mongo_db = _mongo_client[MONGODB_DB]
+
+            # Create unique index on email
+            _mongo_db.users.create_index("email", unique=True)
+
+            print(f"[MongoDB] Connected to {MONGODB_URI}, database: {MONGODB_DB}")
+        except ConnectionFailure as e:
+            print(f"[MongoDB] Connection failed: {e}")
+            return None
+        except Exception as e:
+            print(f"[MongoDB] Error: {e}")
+            return None
+    return _mongo_db
 
 
-# In-memory fallback for demo user (when Supabase is not configured)
+# In-memory fallback for demo user (when MongoDB is not available)
 DEMO_USER = {
     "id": "user_demo_001",
     "email": "demo@mediassist.ai",
@@ -64,49 +80,48 @@ def generate_token() -> str:
 
 @router.post("/register", response_model=AuthResponse)
 async def register(request: UserRegisterRequest):
-    """Register a new user."""
-    supabase = get_supabase()
+    """Register a new user with MongoDB."""
+    db = get_mongodb()
 
-    if supabase:
+    if db is not None:
         try:
-            # Check if email already exists
-            existing = supabase.table("users").select("id").eq("email", request.email).execute()
-            if existing.data:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="이미 등록된 이메일입니다.",
-                )
-
-            # Create new user in Supabase
-            user_data = {
+            # Create new user document
+            user_doc = {
                 "email": request.email,
                 "password_hash": hash_password(request.password),
                 "name": request.name,
                 "role": request.role,
+                "created_at": datetime.utcnow(),
+                "is_active": True,
             }
 
-            result = supabase.table("users").insert(user_data).execute()
+            # Insert user into MongoDB
+            result = db.users.insert_one(user_doc)
 
-            if not result.data:
+            if not result.inserted_id:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail="회원가입 처리 중 오류가 발생했습니다.",
                 )
 
-            new_user = result.data[0]
             access_token = generate_token()
 
             return AuthResponse(
                 user=UserResponse(
-                    id=str(new_user["id"]),
-                    email=new_user["email"],
-                    name=new_user["name"],
-                    role=new_user["role"],
-                    created_at=new_user.get("created_at"),
+                    id=str(result.inserted_id),
+                    email=request.email,
+                    name=request.name,
+                    role=request.role,
+                    created_at=user_doc["created_at"],
                 ),
                 access_token=access_token,
             )
 
+        except DuplicateKeyError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="이미 등록된 이메일입니다.",
+            )
         except HTTPException:
             raise
         except Exception as e:
@@ -116,10 +131,10 @@ async def register(request: UserRegisterRequest):
                 detail=f"회원가입 처리 중 오류가 발생했습니다: {str(e)}",
             )
     else:
-        # Fallback: In-memory registration (for demo without Supabase)
+        # Fallback: Demo registration not allowed
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="데이터베이스 연결이 설정되지 않았습니다. Supabase 설정을 확인해주세요.",
+            detail="데이터베이스 연결이 설정되지 않았습니다. MongoDB 설정을 확인해주세요.",
         )
 
 
@@ -146,36 +161,41 @@ async def login(request: UserLoginRequest):
                 detail="이메일 또는 비밀번호가 올바르지 않습니다.",
             )
 
-    # Check Supabase
-    supabase = get_supabase()
+    # Check MongoDB
+    db = get_mongodb()
 
-    if supabase:
+    if db is not None:
         try:
-            result = supabase.table("users").select("*").eq("email", request.email).execute()
+            # Find user by email
+            user_doc = db.users.find_one({"email": request.email})
 
-            if not result.data:
+            if not user_doc:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="이메일 또는 비밀번호가 올바르지 않습니다.",
                 )
 
-            user_data = result.data[0]
-
-            if not verify_password(request.password, user_data["password_hash"]):
+            if not verify_password(request.password, user_doc["password_hash"]):
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
                     detail="이메일 또는 비밀번호가 올바르지 않습니다.",
                 )
+
+            # Update last login
+            db.users.update_one(
+                {"_id": user_doc["_id"]},
+                {"$set": {"last_login": datetime.utcnow()}}
+            )
 
             access_token = generate_token()
 
             return AuthResponse(
                 user=UserResponse(
-                    id=str(user_data["id"]),
-                    email=user_data["email"],
-                    name=user_data["name"],
-                    role=user_data["role"],
-                    created_at=user_data.get("created_at"),
+                    id=str(user_doc["_id"]),
+                    email=user_doc["email"],
+                    name=user_doc["name"],
+                    role=user_doc["role"],
+                    created_at=user_doc.get("created_at"),
                 ),
                 access_token=access_token,
             )
@@ -189,6 +209,7 @@ async def login(request: UserLoginRequest):
                 detail=f"로그인 처리 중 오류가 발생했습니다: {str(e)}",
             )
     else:
+        # MongoDB not available, only demo user works
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="이메일 또는 비밀번호가 올바르지 않습니다.",
@@ -219,9 +240,18 @@ async def get_current_user():
 @router.get("/status")
 async def auth_status():
     """Check authentication service status."""
-    supabase = get_supabase()
+    db = get_mongodb()
+    user_count = 0
+    if db is not None:
+        try:
+            user_count = db.users.count_documents({})
+        except:
+            pass
+
     return {
-        "supabase_connected": supabase is not None,
-        "supabase_url": settings.SUPABASE_URL if settings.SUPABASE_URL else "Not configured",
+        "mongodb_connected": db is not None,
+        "mongodb_uri": MONGODB_URI.split("@")[-1] if "@" in MONGODB_URI else MONGODB_URI,
+        "database": MONGODB_DB,
+        "user_count": user_count,
         "demo_user_available": True,
     }
