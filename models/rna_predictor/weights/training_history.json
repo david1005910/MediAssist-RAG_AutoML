@@ -1,0 +1,22 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "rna_type_loss": 1.5990138053894043,
+      "disease_loss": 2.068018287420273,
+      "pathogenicity_loss": 1.596602514386177,
+      "risk_loss": 0.08240911411121488,
+      "total_loss": 1.6813733577728271
+    },
+    "val": {
+      "rna_type_loss": 1.6184496879577637,
+      "disease_loss": 2.0537335872650146,
+      "pathogenicity_loss": 1.5922082662582397,
+      "risk_loss": 0.09652312844991684,
+      "total_loss": 1.6786506175994873,
+      "rna_type_accuracy": 0.2,
+      "disease_accuracy": 0.26666666666666666,
+      "disease_f1_macro": 0.11363636363636365,
+      "disease_f1_weighted": 0.24545454545454545,
+      "pathogenicity_accuracy": 0.3333333333333333,
+      "risk_mae": 
