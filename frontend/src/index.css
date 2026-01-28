@@ -2,693 +2,677 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Gooey / Liquid Morphism - Global Styles */
+/* ===== FROSTED METAL AESTHETIC DESIGN SYSTEM ===== */
 
+/* Industrial Metal Background */
 body {
   font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', sans-serif;
-  background: linear-gradient(135deg, #fcd5ce 0%, #f8bbd9 30%, #d4c4fb 60%, #bde0fe 100%);
+  background: linear-gradient(180deg, #2C3036 0%, #1E2126 50%, #16191D 100%);
   background-attachment: fixed;
-  color: #ffffff;
   min-height: 100vh;
-  position: relative;
-  overflow-x: hidden;
+  color: #E3E6EB;
 }
 
-/* Animated background blobs */
-body::before,
-body::after {
+/* Subtle brushed metal texture overlay */
+body::before {
   content: '';
   position: fixed;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.5;
-  z-index: -1;
-  animation: blob-float 20s infinite ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.01) 2px,
+      rgba(255,255,255,0.01) 4px
+    );
+  pointer-events: none;
+  z-index: 0;
 }
 
-body::before {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(248,187,217,0.5) 0%, transparent 70%);
-  top: -100px;
-  left: -100px;
-}
-
-body::after {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(189,224,254,0.5) 0%, transparent 70%);
-  bottom: -100px;
-  right: -100px;
-  animation-delay: -10s;
-}
-
-@keyframes blob-float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(50px, 30px) scale(1.1); }
-  50% { transform: translate(20px, -20px) scale(0.95); }
-  75% { transform: translate(-30px, 20px) scale(1.05); }
-}
-
-/* Gooey / Liquid Morphism Component Classes */
+/* ===== COMPONENT LAYER ===== */
 @layer components {
-  /* Glossy Panel - Main Card */
+
+  /* ===== METAL CARD - Silver Anodized ===== */
   .metal-card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.7) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.5);
-    border-radius: 24px;
+    background: linear-gradient(180deg, #4A4F59 0%, #3D424B 50%, #35393F 100%);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    border-right: 1px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
     box-shadow:
-      0px 12px 32px rgba(0, 0, 0, 0.1),
-      inset 0px 1px 2px rgba(255,255,255,0.5);
+      0px 4px 16px rgba(0,0,0,0.35),
+      inset 0px 1px 0px rgba(255,255,255,0.1),
+      inset 0px -1px 0px rgba(0,0,0,0.2);
     position: relative;
-    overflow: hidden;
   }
 
-  .metal-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 100%);
-  }
-
-  /* Clay Card - Alternative Glossy */
+  /* ===== CLAY CARD - Darker Titanium ===== */
   .clay-card {
-    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.75) 100%);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.6);
-    border-radius: 28px;
+    background: linear-gradient(180deg, #3D424B 0%, #32363D 50%, #2A2E34 100%);
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+    border-left: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid rgba(0,0,0,0.25);
+    border-radius: 6px;
     box-shadow:
-      0px 16px 40px rgba(0, 0, 0, 0.08),
-      inset 0px 2px 4px rgba(255,255,255,0.5);
+      0px 6px 20px rgba(0,0,0,0.4),
+      inset 0px 1px 0px rgba(255,255,255,0.08);
   }
 
-  /* Metal Card Light - Lighter Variant */
+  /* ===== METAL CARD LIGHT - Silver ===== */
   .metal-card-light {
-    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.7);
-    border-radius: 24px;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
-  }
-
-  /* Liquid Header - Glossy Top Bar */
-  .metal-header {
-    background: linear-gradient(180deg, rgba(167,139,250,0.85) 0%, rgba(244,114,182,0.75) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(255,255,255,0.3);
-    box-shadow: 0px 8px 32px rgba(167, 139, 250, 0.25);
-    border-radius: 0 0 32px 32px;
-  }
-
-  /* Gooey Button - Primary */
-  .metal-btn {
-    background: linear-gradient(135deg, rgba(167,139,250,0.9) 0%, rgba(139,92,246,0.8) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(167,139,250,0.5);
+    background: linear-gradient(180deg, #E3E6EB 0%, #C9CED6 50%, #B6BCC7 100%);
+    border-top: 1px solid rgba(255,255,255,0.6);
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    border-radius: 6px;
     box-shadow:
-      0px 8px 20px rgba(139, 92, 246, 0.25),
-      inset 0px 1px 2px rgba(255,255,255,0.3);
-    color: #FFFFFF;
+      0px 4px 12px rgba(0,0,0,0.15),
+      inset 0px 1px 0px rgba(255,255,255,0.5);
+    color: #2C3036;
+  }
+
+  /* ===== METAL HEADER - Dark Titanium Bar ===== */
+  .metal-header {
+    background: linear-gradient(180deg, #3D424B 0%, #32363D 50%, #2A2E34 100%);
+    border-top: 1px solid rgba(255,255,255,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+    box-shadow:
+      0px 4px 16px rgba(0,0,0,0.4),
+      inset 0px 1px 0px rgba(255,255,255,0.1);
+    border-radius: 0;
+  }
+
+  /* ===== METAL BUTTON - Blue Anodized ===== */
+  .metal-btn {
+    background: linear-gradient(180deg, #3C6E96 0%, #355E82 50%, #2C4F6A 100%);
+    border-top: 1px solid rgba(255,255,255,0.25);
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    border-left: 1px solid rgba(255,255,255,0.1);
+    border-right: 1px solid rgba(0,0,0,0.2);
+    border-radius: 4px;
+    box-shadow:
+      0px 3px 8px rgba(0,0,0,0.3),
+      inset 0px 1px 0px rgba(255,255,255,0.2),
+      inset 0px -1px 0px rgba(0,0,0,0.25);
+    color: #F0F0F0;
     font-weight: 600;
-    border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
   }
 
   .metal-btn:hover {
-    background: linear-gradient(135deg, rgba(139,92,246,1) 0%, rgba(124,58,237,0.9) 100%);
+    background: linear-gradient(180deg, #4A7FA8 0%, #3C6E96 50%, #355E82 100%);
     box-shadow:
-      0px 12px 28px rgba(139, 92, 246, 0.35),
-      inset 0px 1px 3px rgba(255,255,255,0.4);
-    transform: translateY(-2px);
+      0px 4px 12px rgba(0,0,0,0.35),
+      inset 0px 1px 0px rgba(255,255,255,0.25);
   }
 
   .metal-btn:active {
-    transform: translateY(0);
+    background: linear-gradient(180deg, #2C4F6A 0%, #355E82 50%, #3C6E96 100%);
     box-shadow:
-      0px 4px 12px rgba(139, 92, 246, 0.2),
-      inset 0px 2px 4px rgba(0,0,0,0.1);
+      0px 1px 4px rgba(0,0,0,0.3),
+      inset 0px 2px 4px rgba(0,0,0,0.2);
   }
 
   .metal-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: none;
   }
 
-  /* Gooey Button - Secondary */
+  /* ===== SECONDARY BUTTON - Silver Metal ===== */
   .metal-btn-secondary {
-    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(167,139,250,0.3);
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
-    color: #4b5563;
+    background: linear-gradient(180deg, #5A606B 0%, #4A4F59 50%, #3D424B 100%);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    border-bottom: 1px solid rgba(0,0,0,0.35);
+    border-radius: 4px;
+    box-shadow:
+      0px 3px 8px rgba(0,0,0,0.25),
+      inset 0px 1px 0px rgba(255,255,255,0.12);
+    color: #D1D5DB;
     font-weight: 600;
-    border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
   }
 
   .metal-btn-secondary:hover {
-    background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 100%);
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
+    background: linear-gradient(180deg, #6A707B 0%, #5A606B 50%, #4A4F59 100%);
   }
 
-  /* Gooey Button - Danger */
+  /* ===== DANGER BUTTON - Red Anodized ===== */
   .metal-btn-danger {
-    background: linear-gradient(135deg, rgba(239,68,68,0.8) 0%, rgba(220,38,38,0.7) 100%);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255,255,255,0.2);
-    box-shadow: 0px 8px 20px rgba(239, 68, 68, 0.3);
-    color: #FFFFFF;
+    background: linear-gradient(180deg, #8B3A3A 0%, #7A3232 50%, #692A2A 100%);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.4);
+    border-radius: 4px;
+    box-shadow:
+      0px 3px 8px rgba(0,0,0,0.3),
+      inset 0px 1px 0px rgba(255,255,255,0.15);
+    color: #F0F0F0;
     font-weight: 600;
-    border-radius: 16px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.15s ease;
   }
 
   .metal-btn-danger:hover {
-    background: linear-gradient(135deg, rgba(248,113,113,0.9) 0%, rgba(239,68,68,0.8) 100%);
-    box-shadow: 0px 12px 28px rgba(239, 68, 68, 0.4);
-    transform: translateY(-2px);
+    background: linear-gradient(180deg, #9B4A4A 0%, #8B3A3A 50%, #7A3232 100%);
   }
 
-  /* Liquid Input */
+  /* ===== METAL INPUT - Recessed Field ===== */
   .metal-input {
-    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.8) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(167,139,250,0.3);
+    background: linear-gradient(180deg, #2A2E34 0%, #32363D 100%);
+    border-top: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-left: 1px solid rgba(0,0,0,0.25);
+    border-right: 1px solid rgba(0,0,0,0.25);
+    border-radius: 4px;
     box-shadow:
-      inset 0px 2px 8px rgba(0, 0, 0, 0.05),
-      0px 4px 12px rgba(0, 0, 0, 0.05);
-    color: #1f2937;
-    border-radius: 16px;
-    transition: all 0.3s ease;
+      inset 0px 2px 4px rgba(0,0,0,0.3),
+      0px 1px 0px rgba(255,255,255,0.05);
+    color: #E3E6EB;
+    transition: all 0.15s ease;
   }
 
   .metal-input:focus {
-    border-color: rgba(167,139,250,0.6);
     outline: none;
+    border-color: #4FC3F7;
     box-shadow:
-      inset 0px 2px 8px rgba(0, 0, 0, 0.05),
-      0px 0px 0px 3px rgba(167, 139, 250, 0.2),
-      0px 8px 20px rgba(0, 0, 0, 0.08);
+      inset 0px 2px 4px rgba(0,0,0,0.3),
+      0px 0px 0px 2px rgba(79, 195, 247, 0.25);
   }
 
   .metal-input::placeholder {
-    color: #9ca3af;
+    color: #6B7280;
   }
 
-  /* Liquid Select */
+  /* ===== METAL SELECT ===== */
   .metal-select {
-    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.8) 100%);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(167,139,250,0.3);
-    box-shadow: inset 0px 2px 8px rgba(0, 0, 0, 0.05);
-    color: #1f2937;
-    border-radius: 16px;
+    background: linear-gradient(180deg, #2A2E34 0%, #32363D 100%);
+    border-top: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    box-shadow: inset 0px 2px 4px rgba(0,0,0,0.3);
+    color: #E3E6EB;
   }
 
   .metal-select option {
-    background: #ffffff;
-    color: #1f2937;
+    background: #32363D;
+    color: #E3E6EB;
   }
 
-  /* Gooey Badge - Primary */
+  /* ===== METAL BADGES ===== */
   .metal-badge {
-    background: linear-gradient(135deg, rgba(59,130,246,0.8) 0%, rgba(139,92,246,0.7) 100%);
-    border: 1px solid rgba(255,255,255,0.3);
-    box-shadow: 0px 4px 12px rgba(59, 130, 246, 0.3);
-    color: #FFFFFF;
+    background: linear-gradient(180deg, #3C6E96 0%, #2C4F6A 100%);
+    border-top: 1px solid rgba(255,255,255,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    border-radius: 3px;
+    box-shadow:
+      0px 2px 4px rgba(0,0,0,0.25),
+      inset 0px 1px 0px rgba(255,255,255,0.15);
+    color: #F0F0F0;
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    text-shadow: 0px 1px 2px rgba(0,0,0,0.2);
+    padding: 0.2rem 0.6rem;
   }
 
   .metal-badge-green {
-    background: linear-gradient(135deg, rgba(34,197,94,0.8) 0%, rgba(22,163,74,0.7) 100%);
-    box-shadow: 0px 4px 12px rgba(34, 197, 94, 0.3);
+    background: linear-gradient(180deg, #26C281 0%, #1FAA6E 100%);
+    border-top: 1px solid rgba(255,255,255,0.25);
+    box-shadow:
+      0px 2px 4px rgba(0,0,0,0.25),
+      inset 0px 1px 0px rgba(255,255,255,0.2);
   }
 
   .metal-badge-yellow {
-    background: linear-gradient(135deg, rgba(251,191,36,0.9) 0%, rgba(245,158,11,0.8) 100%);
-    box-shadow: 0px 4px 12px rgba(251, 191, 36, 0.3);
-    color: #1a1a2e;
-    text-shadow: none;
+    background: linear-gradient(180deg, #D4A012 0%, #B8890F 100%);
+    border-top: 1px solid rgba(255,255,255,0.3);
+    color: #1E2126;
   }
 
   .metal-badge-red {
-    background: linear-gradient(135deg, rgba(239,68,68,0.8) 0%, rgba(220,38,38,0.7) 100%);
-    box-shadow: 0px 4px 12px rgba(239, 68, 68, 0.3);
+    background: linear-gradient(180deg, #8B3A3A 0%, #692A2A 100%);
+    border-top: 1px solid rgba(255,255,255,0.2);
   }
 
-  /* Liquid Progress Bar */
+  /* ===== METAL PROGRESS BAR ===== */
   .metal-progress {
-    background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px;
+    background: linear-gradient(180deg, #2A2E34 0%, #1E2126 100%);
+    border-top: 1px solid rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-radius: 3px;
     overflow: hidden;
-    box-shadow: inset 0px 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0px 2px 4px rgba(0,0,0,0.4);
   }
 
   .metal-progress-bar {
-    background: linear-gradient(90deg, #f9a8d4 0%, #c4b5fd 50%, #93c5fd 100%);
-    border-radius: 10px;
-    box-shadow: 0px 0px 16px rgba(244, 114, 182, 0.4);
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(180deg, #4FC3F7 0%, #29B6F6 50%, #0288D1 100%);
+    border-radius: 2px;
+    box-shadow:
+      inset 0px 1px 0px rgba(255,255,255,0.3),
+      0px 0px 8px rgba(79, 195, 247, 0.3);
   }
 
-  .metal-progress-bar::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-    border-radius: 10px 10px 0 0;
-  }
-
-  /* Liquid Divider */
+  /* ===== METAL DIVIDER ===== */
   .metal-divider {
     border: none;
     height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(0,0,0,0.4) 10%,
+      rgba(0,0,0,0.4) 90%,
+      transparent 100%
+    );
+    box-shadow: 0px 1px 0px rgba(255,255,255,0.05);
   }
 
-  /* Liquid Tab */
+  /* ===== METAL TABS ===== */
   .metal-tab {
-    background: rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.7);
-    border-radius: 16px 16px 0 0;
-    border: 1px solid rgba(255,255,255,0.1);
-    border-bottom: none;
-    transition: all 0.3s ease;
+    background: linear-gradient(180deg, #3D424B 0%, #32363D 100%);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    border-radius: 4px 4px 0 0;
+    color: #A8B0BA;
     font-weight: 500;
-    backdrop-filter: blur(8px);
+    transition: all 0.15s ease;
   }
 
   .metal-tab:hover {
-    background: rgba(255,255,255,0.2);
-    color: #FFFFFF;
+    background: linear-gradient(180deg, #4A4F59 0%, #3D424B 100%);
+    color: #D1D5DB;
   }
 
   .metal-tab-active {
-    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.15) 100%);
-    color: #FFFFFF;
-    border: 1px solid rgba(255,255,255,0.3);
-    border-bottom: none;
+    background: linear-gradient(180deg, #4A4F59 0%, #3D424B 100%);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    color: #F0F0F0;
+    box-shadow: inset 0px 1px 0px rgba(255,255,255,0.1);
   }
 
-  /* Liquid Sidebar */
+  /* ===== METAL SIDEBAR ===== */
   .metal-sidebar {
-    background: linear-gradient(180deg, rgba(196,181,251,0.4) 0%, rgba(248,187,217,0.3) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-right: 1px solid rgba(255,255,255,0.25);
-    box-shadow: 8px 0px 32px rgba(0, 0, 0, 0.1);
-    border-radius: 0 32px 32px 0;
+    background: linear-gradient(180deg, #32363D 0%, #2A2E34 50%, #1E2126 100%);
+    border-right: 1px solid rgba(0,0,0,0.4);
+    box-shadow:
+      4px 0px 16px rgba(0,0,0,0.3),
+      inset -1px 0px 0px rgba(255,255,255,0.05);
   }
 
-  /* JSON Viewer - Pastel Style */
+  /* ===== METAL JSON VIEWER ===== */
   .metal-json-viewer {
-    background: linear-gradient(135deg, rgba(30,41,59,0.95) 0%, rgba(15,23,42,0.9) 100%);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(100,116,139,0.3);
-    box-shadow: inset 0px 2px 12px rgba(0, 0, 0, 0.3);
-    color: #a5f3fc;
+    background: linear-gradient(180deg, #1E2126 0%, #16191D 100%);
+    border-top: 1px solid rgba(0,0,0,0.5);
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    border-radius: 4px;
+    box-shadow: inset 0px 2px 8px rgba(0,0,0,0.4);
+    color: #4FC3F7;
     font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
-    border-radius: 16px;
   }
 
-  /* Status indicators - Gooey Style */
+  /* ===== STATUS INDICATORS ===== */
   .metal-status-online {
-    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    box-shadow: 0px 0px 16px rgba(34, 197, 94, 0.6);
+    background: linear-gradient(180deg, #26C281 0%, #1FAA6E 100%);
     border-radius: 50%;
-    animation: pulse-glow 2s infinite ease-in-out;
-  }
-
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0px 0px 16px rgba(34, 197, 94, 0.6); }
-    50% { box-shadow: 0px 0px 24px rgba(34, 197, 94, 0.9); }
+    box-shadow:
+      0px 0px 6px rgba(38, 194, 129, 0.5),
+      inset 0px 1px 0px rgba(255,255,255,0.3);
   }
 
   .metal-status-offline {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    box-shadow: 0px 0px 12px rgba(239, 68, 68, 0.5);
+    background: linear-gradient(180deg, #8B3A3A 0%, #692A2A 100%);
     border-radius: 50%;
+    box-shadow: inset 0px 1px 0px rgba(255,255,255,0.2);
   }
 
-  /* Scrollbar styling - Liquid */
+  /* ===== METAL SCROLLBAR ===== */
   .metal-scrollbar::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
   }
 
   .metal-scrollbar::-webkit-scrollbar-track {
-    background: rgba(0,0,0,0.1);
-    border-radius: 10px;
+    background: linear-gradient(180deg, #1E2126 0%, #16191D 100%);
+    border-radius: 4px;
   }
 
   .metal-scrollbar::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 100%);
-    border-radius: 10px;
-    border: 2px solid transparent;
-    background-clip: content-box;
+    background: linear-gradient(180deg, #4A4F59 0%, #3D424B 100%);
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.05);
   }
 
   .metal-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.3) 100%);
-    background-clip: content-box;
+    background: linear-gradient(180deg, #5A606B 0%, #4A4F59 100%);
   }
 
-  /* Rounded liquid classes */
+  /* ===== BORDER RADIUS ===== */
   .rounded-metal {
-    border-radius: 24px;
+    border-radius: 6px;
   }
 
   .rounded-metal-sm {
-    border-radius: 16px;
+    border-radius: 4px;
   }
 }
 
-/* Custom utilities - Liquid */
+/* ===== UTILITY LAYER ===== */
 @layer utilities {
   .border-metal-edge {
-    border: 1px solid rgba(255,255,255,0.2);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
   }
 
+  /* Metal Gradient Text */
   .text-metal-gradient {
-    background: linear-gradient(135deg, #f472b6 0%, #a78bfa 50%, #60a5fa 100%);
+    background: linear-gradient(180deg, #E3E6EB 0%, #B6BCC7 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Pastel theme text colors - dark for readability */
+  /* Text Colors for Metal Theme */
   .text-metal-text-light {
-    color: #1f2937;
+    color: #F0F0F0;
   }
 
   .text-metal-text-mid {
-    color: #374151;
+    color: #D1D5DB;
   }
 
   .text-metal-text-muted {
-    color: #6b7280;
+    color: #A8B0BA;
   }
 
-  /* Accent colors - darker for pastel background */
+  /* Accent Colors */
   .text-accent-cyan {
-    color: #0891b2;
+    color: #4FC3F7;
   }
 
   .text-accent-cyan-light {
-    color: #06b6d4;
+    color: #81D4FA;
   }
 
   .text-accent-green {
-    color: #16a34a;
+    color: #26C281;
   }
 
   .text-accent-yellow {
-    color: #ca8a04;
+    color: #D4A012;
   }
 
   .bg-accent-cyan {
-    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    background: linear-gradient(180deg, #3C6E96 0%, #2C4F6A 100%);
   }
 
-  /* Liquid shadow utilities */
+  /* Shadow Utilities */
   .shadow-metal {
-    box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.18);
+    box-shadow: 0px 4px 16px rgba(0,0,0,0.35);
   }
 
   .shadow-metal-sm {
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.25);
   }
 
   .shadow-metal-lg {
-    box-shadow: 0px 20px 48px rgba(0, 0, 0, 0.25);
+    box-shadow: 0px 8px 24px rgba(0,0,0,0.45);
   }
 }
 
-/* Global text styling for pastel theme - dark text for readability */
+/* ===== GLOBAL TEXT OVERRIDES FOR METAL THEME ===== */
+
 .text-white {
-  color: #FFFFFF !important;
-  text-shadow: 0px 1px 2px rgba(0,0,0,0.1);
+  color: #F0F0F0 !important;
 }
 
-/* Text colors - dark for pastel background visibility */
 .text-gray-800 {
-  color: #1f2937 !important;
+  color: #E3E6EB !important;
 }
 
 .text-gray-700 {
-  color: #374151 !important;
+  color: #D1D5DB !important;
 }
 
 .text-gray-600 {
-  color: #4b5563 !important;
+  color: #A8B0BA !important;
 }
 
 .text-gray-500 {
-  color: #6b7280 !important;
+  color: #8B929C !important;
 }
 
-/* Card headings - dark text for pastel theme */
+/* Card Text */
 .metal-card h1, .metal-card h2, .metal-card h3,
 .metal-card h4, .metal-card h5, .metal-card h6 {
-  color: #1f2937;
+  color: #F0F0F0;
 }
 
 .metal-card p, .metal-card span, .metal-card label {
-  color: #374151;
+  color: #D1D5DB;
 }
 
 .clay-card h1, .clay-card h2, .clay-card h3,
 .clay-card h4, .clay-card h5, .clay-card h6 {
-  color: #1f2937;
+  color: #F0F0F0;
 }
 
 .clay-card p, .clay-card span, .clay-card label {
-  color: #374151;
+  color: #D1D5DB;
 }
 
-/* Override specific color classes for pastel theme - darker accents for visibility */
+/* Accent Color Overrides */
 .text-cyan-600, .text-cyan-700 {
-  color: #0891b2 !important;
+  color: #4FC3F7 !important;
 }
 
 .text-green-600, .text-green-700 {
-  color: #16a34a !important;
+  color: #26C281 !important;
 }
 
 .text-orange-600 {
-  color: #ea580c !important;
+  color: #E67E22 !important;
 }
 
 .text-purple-600 {
-  color: #9333ea !important;
+  color: #9B59B6 !important;
 }
 
 .text-amber-700 {
-  color: #b45309 !important;
+  color: #D4A012 !important;
 }
 
 .text-red-600, .text-red-700 {
-  color: #dc2626 !important;
+  color: #C0392B !important;
 }
 
 .text-yellow-600 {
-  color: #ca8a04 !important;
+  color: #D4A012 !important;
 }
 
 .text-blue-700 {
-  color: #1d4ed8 !important;
+  color: #4FC3F7 !important;
 }
 
-/* Background color overrides */
+/* Background Color Overrides */
 .bg-cyan-50, .bg-cyan-100 {
-  background: rgba(103, 232, 249, 0.15) !important;
+  background: rgba(79, 195, 247, 0.1) !important;
 }
 
 .bg-green-100 {
-  background: rgba(74, 222, 128, 0.15) !important;
+  background: rgba(38, 194, 129, 0.1) !important;
 }
 
 .bg-yellow-100 {
-  background: rgba(253, 224, 71, 0.15) !important;
+  background: rgba(212, 160, 18, 0.1) !important;
 }
 
 .bg-blue-100 {
-  background: rgba(147, 197, 253, 0.15) !important;
+  background: rgba(79, 195, 247, 0.1) !important;
 }
 
 .bg-red-100 {
-  background: rgba(252, 165, 165, 0.15) !important;
+  background: rgba(192, 57, 43, 0.1) !important;
 }
 
 .bg-indigo-100 {
-  background: rgba(199, 210, 254, 0.15) !important;
+  background: rgba(155, 89, 182, 0.1) !important;
 }
 
-/* Border color overrides */
+/* Border Color Overrides */
 .border-cyan-200, .border-cyan-300 {
-  border-color: rgba(103, 232, 249, 0.3) !important;
+  border-color: rgba(79, 195, 247, 0.3) !important;
 }
 
 .border-green-300 {
-  border-color: rgba(74, 222, 128, 0.3) !important;
+  border-color: rgba(38, 194, 129, 0.3) !important;
 }
 
 .border-yellow-300 {
-  border-color: rgba(253, 224, 71, 0.3) !important;
+  border-color: rgba(212, 160, 18, 0.3) !important;
 }
 
 .border-gray-200 {
-  border-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255,255,255,0.1) !important;
 }
 
-/* ===== MODAL & LIGHT BACKGROUND OVERRIDES ===== */
-/* Preserve dark text inside white/light background containers */
+/* ===== MODAL & WHITE BACKGROUND OVERRIDES ===== */
+.bg-white {
+  background: linear-gradient(180deg, #4A4F59 0%, #3D424B 50%, #35393F 100%) !important;
+}
 
-/* White backgrounds - keep text dark */
 .bg-white .text-gray-800,
 .bg-white .text-gray-700,
 .bg-white .text-gray-600,
 .bg-white h1, .bg-white h2, .bg-white h3,
 .bg-white h4, .bg-white h5, .bg-white h6 {
-  color: #1f2937 !important;
-  text-shadow: none !important;
+  color: #E3E6EB !important;
 }
 
 .bg-white .text-gray-500 {
-  color: #6b7280 !important;
-  text-shadow: none !important;
+  color: #A8B0BA !important;
 }
 
-.bg-white p, .bg-white span, .bg-white label, .bg-white div {
-  text-shadow: none !important;
+.bg-white p, .bg-white span, .bg-white label {
+  color: #D1D5DB !important;
 }
 
-/* Gray backgrounds - keep text dark */
+.bg-gray-100 {
+  background: linear-gradient(180deg, #3D424B 0%, #35393F 100%) !important;
+}
+
 .bg-gray-100 .text-gray-800,
 .bg-gray-100 .text-gray-700,
 .bg-gray-100 .text-gray-600 {
-  color: #1f2937 !important;
-  text-shadow: none !important;
+  color: #E3E6EB !important;
 }
 
-.bg-gray-50 .text-gray-800,
-.bg-gray-50 .text-gray-700,
-.bg-gray-50 .text-gray-600 {
-  color: #1f2937 !important;
-  text-shadow: none !important;
+.bg-gray-50 {
+  background: linear-gradient(180deg, #4A4F59 0%, #3D424B 100%) !important;
 }
 
-/* Indigo backgrounds (modal headers) */
-.bg-indigo-50 .text-gray-800,
-.bg-indigo-50 .text-gray-600 {
-  color: #1f2937 !important;
-  text-shadow: none !important;
+.bg-indigo-50 {
+  background: linear-gradient(180deg, #3C4A5A 0%, #32404D 100%) !important;
 }
 
-.bg-purple-50 .text-gray-800,
-.bg-purple-50 .text-gray-600 {
-  color: #1f2937 !important;
-  text-shadow: none !important;
+.bg-purple-50 {
+  background: linear-gradient(180deg, #4A3D5A 0%, #3D3250 100%) !important;
 }
 
-/* Modal specific fixes */
-.bg-white .border-gray-200 {
-  border-color: #e5e7eb !important;
-}
-
-.bg-white .border-gray-100 {
-  border-color: #f3f4f6 !important;
-}
-
-.bg-white .bg-gray-100 {
-  background: #f3f4f6 !important;
-}
-
-.bg-white .hover\:bg-gray-100:hover {
-  background: #f3f4f6 !important;
-}
-
-/* Keep specific colored text visible in modals */
-.bg-white .text-indigo-700 {
-  color: #4338ca !important;
-}
-
-.bg-white .text-red-700 {
-  color: #b91c1c !important;
-}
-
-.bg-white .text-green-400 {
-  color: #22c55e !important;
-}
-
-.bg-white .text-blue-400 {
-  color: #3b82f6 !important;
-}
-
-.bg-white .text-yellow-400 {
-  color: #facc15 !important;
-}
-
-.bg-white .text-red-400 {
-  color: #f87171 !important;
-}
-
-/* Fix inputs inside white containers */
+/* Modal Input Styling */
 .bg-white .metal-input {
-  background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.05) 100%) !important;
-  color: #1f2937 !important;
-  border: 1px solid #d1d5db !important;
+  background: linear-gradient(180deg, #2A2E34 0%, #32363D 100%) !important;
+  color: #E3E6EB !important;
+  border-top: 1px solid rgba(0,0,0,0.4) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.05) !important;
 }
 
 .bg-white .metal-input::placeholder {
-  color: #9ca3af !important;
+  color: #6B7280 !important;
 }
 
 .bg-white .metal-input:focus {
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+  border-color: #4FC3F7 !important;
+  box-shadow: 0px 0px 0px 2px rgba(79, 195, 247, 0.25) !important;
 }
 
-.bg-white .metal-input option {
-  background: #ffffff;
-  color: #1f2937;
+.bg-white .border-gray-200 {
+  border-color: rgba(255,255,255,0.08) !important;
 }
 
-/* Fix checkboxes */
-.bg-white input[type="checkbox"] {
-  accent-color: #6366f1;
+.bg-white .border-gray-100 {
+  border-color: rgba(255,255,255,0.05) !important;
 }
 
-/* Divide colors in white containers */
+.bg-white .bg-gray-100 {
+  background: linear-gradient(180deg, #3D424B 0%, #35393F 100%) !important;
+}
+
+.bg-white .hover\:bg-gray-100:hover {
+  background: linear-gradient(180deg, #4A4F59 0%, #3D424B 100%) !important;
+}
+
+.bg-white .text-indigo-700 {
+  color: #81D4FA !important;
+}
+
+.bg-white .text-red-700 {
+  color: #E74C3C !important;
+}
+
 .bg-white .divide-gray-100 > * + * {
-  border-color: #f3f4f6 !important;
+  border-color: rgba(255,255,255,0.05) !important;
 }
 
 .bg-white .divide-gray-200 > * + * {
-  border-color: #e5e7eb !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+
+/* Gradient Header for modals */
+.bg-gradient-to-r {
+  background: linear-gradient(90deg, #3C4A5A 0%, #4A3D5A 100%) !important;
+}
+
+/* ===== SPECIAL METAL EFFECTS ===== */
+
+/* Machined Edge Effect */
+.machined-edge {
+  border-top: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid rgba(0,0,0,0.4);
+  box-shadow:
+    inset 0px 1px 0px rgba(255,255,255,0.1),
+    inset 0px -1px 0px rgba(0,0,0,0.2);
+}
+
+/* Chamfered Corner Effect */
+.chamfered {
+  clip-path: polygon(
+    8px 0%, 100% 0%, 100% calc(100% - 8px),
+    calc(100% - 8px) 100%, 0% 100%, 0% 8px
+  );
+}
+
+/* Industrial Panel */
+.industrial-panel {
+  background: linear-gradient(180deg, #4A4F59 0%, #3D424B 100%);
+  border: 1px solid rgba(0,0,0,0.3);
+  box-shadow:
+    0px 4px 16px rgba(0,0,0,0.35),
+    inset 0px 1px 0px rgba(255,255,255,0.1),
+    inset 0px -1px 0px rgba(0,0,0,0.2);
+}
+
+/* Anodized Accent Strip */
+.accent-strip {
+  height: 2px;
+  background: linear-gradient(90deg, #4FC3F7 0%, #29B6F6 100%);
+  box-shadow: 0px 0px 4px rgba(79, 195, 247, 0.4);
+}
+
+/* Indicator Light */
+.indicator-light {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow:
+    0px 0px 4px currentColor,
+    inset 0px 1px 2px rgba(255,255,255,0.3);
 }
