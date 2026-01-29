@@ -1,5 +1,18 @@
 # Render Blueprint - MediAssist AI
 # https://render.com/docs/blueprint-spec
+#
+# 배포 전 필수 설정 (Render Dashboard에서 수동 설정 필요):
+# 1. MongoDB Atlas 계정 생성 후 MONGODB_URI 설정
+# 2. OpenAI API Key 획득 후 OPENAI_API_KEY 설정
+# 3. (선택) Neo4j Aura 계정 생성 후 NEO4J_* 설정
+# 4. (선택) Cloudflare R2 또는 AWS S3 설정 후 MINIO_* 설정
+#
+# 예상 비용 (월):
+# - PostgreSQL Starter: $7
+# - Redis Starter: $10
+# - Analysis Service Standard: $25 (ML 모델용)
+# - 기타 서비스 Free: $0
+# - 총: 약 $42/월
 
 databases:
   # PostgreSQL Database
@@ -28,10 +41,11 @@ services:
     buildFilter:
       paths:
         - frontend/**
+    # Docker build arguments - Render에서 빌드 시 ARG로 주입됨
     envVars:
       - key: VITE_API_URL
         value: https://mediassist-analysis.onrender.com
-    healthCheckPath: /
+    healthCheckPath: /health
     autoDeploy: true
 
   # ============================================
@@ -40,7 +54,7 @@ services:
   - type: web
     name: mediassist-analysis
     runtime: docker
-    dockerfilePath: ./services/analysis/Dockerfile
+    dockerfilePath: ./Dockerfile
     dockerContext: .
     region: singapore
     plan: standard  # ML 모델용 메모리 필요 (최소 standard $25/mo)
@@ -61,22 +75,24 @@ services:
         value: mediassist
       - key: OPENAI_API_KEY
         sync: false  # 수동 설정 필요
+      - key: GOOGLE_API_KEY
+        sync: false  # Google Gemini API (선택)
       - key: JWT_SECRET
         generateValue: true  # 자동 생성
       - key: JWT_ALGORITHM
         value: HS256
       - key: CHROMA_HOST
-        sync: false  # ChromaDB 호스트 (외부 서비스)
+        sync: false  # ChromaDB 호스트 (외부 서비스 또는 비활성화)
       - key: CHROMA_PORT
         value: "8000"
       - key: NEO4J_URI
-        sync: false  # Neo4j Aura URI
+        sync: false  # Neo4j Aura URI (선택)
       - key: NEO4J_USER
         value: neo4j
       - key: NEO4J_PASSWORD
         sync: false
       - key: MINIO_ENDPOINT
-        sync: false  # S3 호환 스토리지
+        sync: false  # S3 호환 스토리지 (선택)
       - key: MINIO_ACCESS_KEY
         sync: false
       - key: MINIO_SECRET_KEY
@@ -90,7 +106,7 @@ services:
     autoDeploy: true
 
   # ============================================
-  # Auth Service
+  # Auth Service (MongoDB 기반 인증)
   # ============================================
   - type: web
     name: mediassist-auth
@@ -102,7 +118,7 @@ services:
     healthCheckPath: /health
     envVars:
       - key: MONGODB_URI
-        sync: false
+        sync: false  # MongoDB Atlas URI
       - key: MONGODB_DB
         value: mediassist
       - key: JWT_SECRET
@@ -112,6 +128,8 @@ services:
           envVarKey: JWT_SECRET
       - key: JWT_ALGORITHM
         value: HS256
+      - key: CORS_ORIGINS
+        value: https://mediassist-frontend.onrender.com
     autoDeploy: true
 
   # ============================================
@@ -135,6 +153,10 @@ services:
           name: mediassist-analysis
           type: web
           envVarKey: JWT_SECRET
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: CORS_ORIGINS
+        value: https://mediassist-frontend.onrender.com
     autoDeploy: true
 
   # ============================================
@@ -153,6 +175,13 @@ services:
         fromDatabase:
           name: mediassist-db
           property: connectionString
+      - key: JWT_SECRET
+        fromService:
+          name: mediassist-analysis
+          type: web
+          envVarKey: JWT_SECRET
+      - key: JWT_ALGORITHM
+        value: HS256
       - key: MINIO_ENDPOINT
         sync: false
       - key: MINIO_ACCESS_KEY
@@ -161,4 +190,6 @@ services:
         sync: false
       - key: MINIO_BUCKET
         value: reports
+      - key: CORS_ORIGINS
+        value: https://mediassist-frontend.onrender.com
     autoDeploy: true

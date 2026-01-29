@@ -1,14 +1,63 @@
+import logging
 from contextlib import asynccontextmanager
+from typing import Dict, Any
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.config import settings
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO if not settings.DEBUG else logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
+
+# Service health state
+service_state: Dict[str, Any] = {
+    "database": False,
+    "startup_complete": False,
+}
+
+
+async def check_database_connection() -> bool:
+    """Check PostgreSQL connection status."""
+    try:
+        from sqlalchemy import text
+        from sqlalchemy.ext.asyncio import create_async_engine
+
+        engine = create_async_engine(settings.DATABASE_URL, echo=False)
+        async with engine.connect() as conn:
+            await conn.execute(text("SELECT 1"))
+        await engine.dispose()
+        return True
+    except Exception as e:
+        logger.warning(f"Database connection check failed: {e}")
+        return False
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup/shutdown lifecycle."""
+    logger.info("=" * 50)
+    logger.info("MediAssist Patient Service Starting...")
+    logger.info("=" * 50)
+
+    service_state["database"] = await check_database_connection()
+    logger.info(f"  PostgreSQL: {'Connected' if service_state['database'] else 'Not available'}")
+
+    service_state["startup_complete"] = True
+    logger.info(f"  CORS Origins: {settings.CORS_ORIGINS}")
+    logger.info("=" * 50)
+    logger.info("Patient Service Ready")
+    logger.info("=" * 50)
+
     yield
+
+    logger.info("Patient service shutting down...")
+    service_state["startup_complete"] = False
 
 
 app = FastAPI(
@@ -16,6 +65,8 @@ app = FastAPI(
     description="Patient management service for MediAssist AI",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 app.add_middleware(
@@ -29,9 +80,39 @@ app.add_middleware(
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    """Basic health check for load balancers."""
+    return {"status": "healthy", "service": "patient"}
 
 
 @app.get("/ready")
 async def readiness_check():
-    return {"status": "ready"}
+    """Detailed readiness check."""
+    return {
+        "status": "ready" if service_state["startup_complete"] else "starting",
+        "services": {
+            "database": service_state["database"],
+        },
+    }
+
+
+@app.get("/")
+async def root():
+    """Root endpoint."""
+    return {
+        "service": "MediAssist Patient Service",
+        "version": "1.0.0",
+        "docs": "/docs",
+    }
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal server error",
+            "message": "서버 내부 오류가 발생했습니다.",
+            "detail": str(exc) if settings.DEBUG else None,
+        },
+    )
