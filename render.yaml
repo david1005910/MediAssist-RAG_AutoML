@@ -9,10 +9,10 @@
 #
 # 예상 비용 (월):
 # - PostgreSQL free: $0 (90일 후 만료)
-# - Redis free: $0
 # - Analysis Service Standard: $25 (ML 모델용)
 # - 기타 서비스 Free: $0
 # - 총: 약 $25/월 (유료 DB 사용 시 추가)
+# 참고: Redis는 Dashboard에서 수동 생성 필요
 
 databases:
   # PostgreSQL Database
@@ -21,11 +21,6 @@ databases:
     user: mediassist
     plan: free  # 무료: free (90일), 유료: basic-256mb ($7/mo), basic-1gb ($20/mo)
     region: singapore  # 또는 oregon, frankfurt 등
-
-  # Redis Cache (Key-Value Store)
-  - name: mediassist-redis
-    plan: free  # 무료: free, 유료: starter ($10/mo)
-    region: singapore
 
 services:
   # ============================================
@@ -65,10 +60,7 @@ services:
           name: mediassist-db
           property: connectionString
       - key: REDIS_URL
-        fromService:
-          name: mediassist-redis
-          type: redis
-          property: connectionString
+        sync: false  # Redis 수동 설정 필요 (Dashboard에서 Key-Value Store 생성 후)
       - key: MONGODB_URI
         sync: false  # 수동 설정 필요 (MongoDB Atlas)
       - key: MONGODB_DB
