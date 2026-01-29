@@ -39,7 +39,7 @@ services:
     # Docker build arguments - Render에서 빌드 시 ARG로 주입됨
     envVars:
       - key: VITE_API_URL
-        value: https://mediassist-analysis.onrender.com
+        value: https://mediassist-analysis-4clk.onrender.com
     healthCheckPath: /health
     autoDeploy: true
 
@@ -92,7 +92,7 @@ services:
       - key: MINIO_BUCKET
         value: reports
       - key: CORS_ORIGINS_STR
-        value: https://mediassist-frontend.onrender.com
+        value: https://mediassist-frontend-4clk.onrender.com
       - key: DEBUG
         value: "false"
     autoDeploy: true
@@ -121,7 +121,7 @@ services:
       - key: JWT_ALGORITHM
         value: HS256
       - key: CORS_ORIGINS_STR
-        value: https://mediassist-frontend.onrender.com
+        value: https://mediassist-frontend-4clk.onrender.com
     autoDeploy: true
 
   # ============================================
@@ -148,7 +148,7 @@ services:
       - key: JWT_ALGORITHM
         value: HS256
       - key: CORS_ORIGINS_STR
-        value: https://mediassist-frontend.onrender.com
+        value: https://mediassist-frontend-4clk.onrender.com
     autoDeploy: true
 
   # ============================================
@@ -183,5 +183,5 @@ services:
       - key: MINIO_BUCKET
         value: reports
       - key: CORS_ORIGINS_STR
-        value: https://mediassist-frontend.onrender.com
+        value: https://mediassist-frontend-4clk.onrender.com
     autoDeploy: true
