@@ -1,0 +1,164 @@
+# Render Blueprint - MediAssist AI
+# https://render.com/docs/blueprint-spec
+
+databases:
+  # PostgreSQL Database
+  - name: mediassist-db
+    databaseName: mediassist
+    user: mediassist
+    plan: starter  # 무료: free, 유료: starter ($7/mo), standard ($20/mo)
+    region: singapore  # 또는 oregon, frankfurt 등
+
+  # Redis Cache
+  - name: mediassist-redis
+    plan: starter  # 무료 없음, starter ($10/mo)
+    region: singapore
+
+services:
+  # ============================================
+  # Frontend (React + Nginx)
+  # ============================================
+  - type: web
+    name: mediassist-frontend
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile.render
+    dockerContext: ./frontend
+    region: singapore
+    plan: free  # 무료 가능
+    buildFilter:
+      paths:
+        - frontend/**
+    envVars:
+      - key: VITE_API_URL
+        value: https://mediassist-analysis.onrender.com
+    healthCheckPath: /
+    autoDeploy: true
+
+  # ============================================
+  # Analysis Service (Main ML Backend)
+  # ============================================
+  - type: web
+    name: mediassist-analysis
+    runtime: docker
+    dockerfilePath: ./services/analysis/Dockerfile
+    dockerContext: .
+    region: singapore
+    plan: standard  # ML 모델용 메모리 필요 (최소 standard $25/mo)
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mediassist-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: mediassist-redis
+          type: redis
+          property: connectionString
+      - key: MONGODB_URI
+        sync: false  # 수동 설정 필요 (MongoDB Atlas)
+      - key: MONGODB_DB
+        value: mediassist
+      - key: OPENAI_API_KEY
+        sync: false  # 수동 설정 필요
+      - key: JWT_SECRET
+        generateValue: true  # 자동 생성
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: CHROMA_HOST
+        sync: false  # ChromaDB 호스트 (외부 서비스)
+      - key: CHROMA_PORT
+        value: "8000"
+      - key: NEO4J_URI
+        sync: false  # Neo4j Aura URI
+      - key: NEO4J_USER
+        value: neo4j
+      - key: NEO4J_PASSWORD
+        sync: false
+      - key: MINIO_ENDPOINT
+        sync: false  # S3 호환 스토리지
+      - key: MINIO_ACCESS_KEY
+        sync: false
+      - key: MINIO_SECRET_KEY
+        sync: false
+      - key: MINIO_BUCKET
+        value: reports
+      - key: CORS_ORIGINS
+        value: https://mediassist-frontend.onrender.com
+      - key: DEBUG
+        value: "false"
+    autoDeploy: true
+
+  # ============================================
+  # Auth Service
+  # ============================================
+  - type: web
+    name: mediassist-auth
+    runtime: docker
+    dockerfilePath: ./services/auth/Dockerfile
+    dockerContext: ./services/auth
+    region: singapore
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: mediassist
+      - key: JWT_SECRET
+        fromService:
+          name: mediassist-analysis
+          type: web
+          envVarKey: JWT_SECRET
+      - key: JWT_ALGORITHM
+        value: HS256
+    autoDeploy: true
+
+  # ============================================
+  # Patient Service
+  # ============================================
+  - type: web
+    name: mediassist-patient
+    runtime: docker
+    dockerfilePath: ./services/patient/Dockerfile
+    dockerContext: ./services/patient
+    region: singapore
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mediassist-db
+          property: connectionString
+      - key: JWT_SECRET
+        fromService:
+          name: mediassist-analysis
+          type: web
+          envVarKey: JWT_SECRET
+    autoDeploy: true
+
+  # ============================================
+  # Report Service
+  # ============================================
+  - type: web
+    name: mediassist-report
+    runtime: docker
+    dockerfilePath: ./services/report/Dockerfile
+    dockerContext: ./services/report
+    region: singapore
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mediassist-db
+          property: connectionString
+      - key: MINIO_ENDPOINT
+        sync: false
+      - key: MINIO_ACCESS_KEY
+        sync: false
+      - key: MINIO_SECRET_KEY
+        sync: false
+      - key: MINIO_BUCKET
+        value: reports
+    autoDeploy: true
