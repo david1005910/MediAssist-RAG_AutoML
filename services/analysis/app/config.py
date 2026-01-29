@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
 from functools import lru_cache
+from typing import List
 
 
 class Settings(BaseSettings):
@@ -11,6 +11,10 @@ class Settings(BaseSettings):
 
     # Database
     DATABASE_URL: str = "postgresql+asyncpg://user:pass@localhost:5432/mediassist"
+
+    # MongoDB
+    MONGODB_URI: str = "mongodb://localhost:27017"
+    MONGODB_DB: str = "mediassist"
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
@@ -23,6 +27,7 @@ class Settings(BaseSettings):
     CHROMA_HOST: str = "localhost"
     CHROMA_PORT: int = 8000
     OPENAI_API_KEY: str = ""
+    GOOGLE_API_KEY: str = ""
 
     # Supabase
     SUPABASE_URL: str = ""
@@ -33,19 +38,23 @@ class Settings(BaseSettings):
     NEO4J_USER: str = "neo4j"
     NEO4J_PASSWORD: str = "password"
 
+    # Storage
+    MINIO_ENDPOINT: str = "localhost:9000"
+    MINIO_ACCESS_KEY: str = ""
+    MINIO_SECRET_KEY: str = ""
+    MINIO_BUCKET: str = "reports"
+
     # Security
     JWT_SECRET: str = "your-secret-key"
     JWT_ALGORITHM: str = "HS256"
 
-    # CORS - 환경변수에서 쉼표로 구분된 문자열을 리스트로 파싱
-    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:3003", "http://localhost:3004", "http://localhost:3005"]
+    # CORS - 문자열로 저장하고 프로퍼티로 파싱
+    CORS_ORIGINS_STR: str = "http://localhost:3000,http://localhost:3003"
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
-        return v
+    @property
+    def CORS_ORIGINS(self) -> List[str]:
+        """Parse CORS origins from comma-separated string."""
+        return [origin.strip() for origin in self.CORS_ORIGINS_STR.split(",") if origin.strip()]
 
     class Config:
         env_file = ".env"
