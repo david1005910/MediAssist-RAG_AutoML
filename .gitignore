@@ -75,6 +75,10 @@ data/
 !**/fixtures/*.json
 !**/training_history.json
 !test_data/*.json
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/tsconfig.json
+!frontend/tsconfig.node.json
 
 # ChromaDB
 chroma_db/
