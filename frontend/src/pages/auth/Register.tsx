@@ -11,7 +11,7 @@ import { useAuthStore } from '@/stores/authStore'
 const registerSchema = z.object({
   name: z.string().min(2, '이름은 2자 이상이어야 합니다'),
   email: z.string().email('유효한 이메일을 입력하세요'),
-  password: z.string().min(6, '비밀번호는 6자 이상이어야 합니다'),
+  password: z.string().min(8, '비밀번호는 8자 이상이어야 합니다'),
   confirmPassword: z.string(),
   role: z.enum(['doctor', 'nurse', 'researcher', 'admin']),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -235,7 +235,7 @@ export default function Register() {
                 {...register('password')}
                 type="password"
                 className="mt-1 block w-full px-4 py-3 metal-input"
-                placeholder="6자 이상"
+                placeholder="8자 이상"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
