@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
 from functools import lru_cache
+from typing import List
+import os
 
 
 class Settings(BaseSettings):
@@ -25,15 +26,13 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # CORS - 환경변수에서 쉼표로 구분된 문자열을 리스트로 파싱
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    # CORS - 문자열로 저장하고 프로퍼티로 파싱
+    CORS_ORIGINS_STR: str = "http://localhost:3000"
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            return [origin.strip() for origin in v.split(",")]
-        return v
+    @property
+    def CORS_ORIGINS(self) -> List[str]:
+        """Parse CORS origins from comma-separated string."""
+        return [origin.strip() for origin in self.CORS_ORIGINS_STR.split(",") if origin.strip()]
 
     class Config:
         env_file = ".env"

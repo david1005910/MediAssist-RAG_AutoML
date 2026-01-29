@@ -120,7 +120,7 @@ services:
           envVarKey: JWT_SECRET
       - key: JWT_ALGORITHM
         value: HS256
-      - key: CORS_ORIGINS
+      - key: CORS_ORIGINS_STR
         value: https://mediassist-frontend.onrender.com
     autoDeploy: true
 
@@ -147,7 +147,7 @@ services:
           envVarKey: JWT_SECRET
       - key: JWT_ALGORITHM
         value: HS256
-      - key: CORS_ORIGINS
+      - key: CORS_ORIGINS_STR
         value: https://mediassist-frontend.onrender.com
     autoDeploy: true
 
@@ -182,6 +182,6 @@ services:
         sync: false
       - key: MINIO_BUCKET
         value: reports
-      - key: CORS_ORIGINS
+      - key: CORS_ORIGINS_STR
         value: https://mediassist-frontend.onrender.com
     autoDeploy: true
