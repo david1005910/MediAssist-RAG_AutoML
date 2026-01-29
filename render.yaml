@@ -8,8 +8,8 @@
 # 4. (선택) Cloudflare R2 또는 AWS S3 설정 후 MINIO_* 설정
 #
 # 예상 비용 (월):
-# - PostgreSQL Starter: $7
-# - Redis Starter: $10
+# - PostgreSQL Basic 256MB: $7
+# - Redis Basic 25MB: $10
 # - Analysis Service Standard: $25 (ML 모델용)
 # - 기타 서비스 Free: $0
 # - 총: 약 $42/월
@@ -19,12 +19,12 @@ databases:
   - name: mediassist-db
     databaseName: mediassist
     user: mediassist
-    plan: starter  # 무료: free, 유료: starter ($7/mo), standard ($20/mo)
+    plan: basic_256mb  # 무료: free, 유료: basic_256mb ($7/mo), basic_1gb ($20/mo)
     region: singapore  # 또는 oregon, frankfurt 등
 
   # Redis Cache
   - name: mediassist-redis
-    plan: starter  # 무료 없음, starter ($10/mo)
+    plan: basic_25mb  # 무료 없음, basic_25mb ($10/mo)
     region: singapore
 
 services:
