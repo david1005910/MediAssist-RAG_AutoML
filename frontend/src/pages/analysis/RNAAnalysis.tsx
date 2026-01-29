@@ -73,8 +73,8 @@ export default function RNAAnalysis() {
   const { data: sampleData } = useQuery<SampleDataResponse>({
     queryKey: ['rna-sample-data'],
     queryFn: async () => {
-      const response = await fetch('/api/v1/rna/sample-data')
-      return response.json()
+      const response = await apiClient.get<SampleDataResponse>('/api/v1/rna/sample-data')
+      return response.data
     },
     enabled: showSampleData,
   })

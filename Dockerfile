@@ -40,6 +40,7 @@ COPY --from=builder /root/.local /home/appuser/.local
 COPY services/analysis/app ./app
 COPY models ./models
 COPY rag ./rag
+COPY test_data ./test_data
 
 # Set ownership
 RUN chown -R appuser:appuser /app
