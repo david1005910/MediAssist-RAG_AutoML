@@ -22,6 +22,9 @@ python-multipart>=0.0.6
 pymongo>=4.6.0
 dnspython>=2.4.0  # Required for mongodb+srv:// (Atlas) connections
 
+# Graph Database
+neo4j>=5.14.0
+
 # ML
 torch>=2.1.0
 torchvision>=0.16.0
